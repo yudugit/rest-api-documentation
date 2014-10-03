@@ -1,5 +1,7 @@
-Yudu Publisher REST API v1.0
-============================
+Yudu Publisher REST API v1.0 (DEPRECATED)
+========================================
+
+**This version of the API is deprecated. You can find the most recent version [here](https://github.com/yudugit/rest-api-documentation).**
 
 ## Table of contents
 
