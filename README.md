@@ -7,6 +7,8 @@ This Document outlines the web service interface provided by YUDU to enable mana
 
 Access to the service requires a Yudu Publisher account with the "REST API" permission and a valid API token created through thr Yudu Publisher interface.
 
+The documentation for the older v1.0 API is available [here](https://github.com/yudugit/rest-api-documentation/tree/v1.0).
+
 ### Overview
 
 The Yudu API uses the "Representational state transfer" (REST) architectural style. In particular, it applies the "hypermedia as the engine of application state" (HATEOAS) principle in the design of the resources. If you are not already familiar with these principles then we recommend reading [REST in Practice](http://restinpractice.com/book/) as an introduction before diving further into the Yudu API.
@@ -428,7 +430,7 @@ A **PUT** request updates an existing permission. The request body must contain 
 A **DELETE** request deletes an existing permission.
 
 
-### Subscripion
+### Subscription
 
 The subscription corresponds to a "Subscription" in Yudu Publisher.
 
