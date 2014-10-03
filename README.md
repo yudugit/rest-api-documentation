@@ -77,7 +77,9 @@ The Yudu API uses the "Representational state transfer" (REST) architectural sty
 
 We have produced a sample PHP application that shows the use of the API. Note that this code is not ready for production use, and serves as an example only. It is not extensively tested and does not handle every possible error case in a suitable manner for production use. In addition, it does not represent best practices for implementing a client of the API. For example, as noted below, rather than using the URIs as described, you are encouraged to make use of the hypermedia present in the resources to navigate the API, decoupling your implementation from ours.
 
-The example code is located within this repository in the `examples` directory and the documentation can be found [here](examples/phpClient/).
+We have also produced a simple ruby command line tool to calculate the correct Base64 encoded HMAC SHA256 hash for any string and shared secret (see [Authentication](#authentication)). This can be used to check that your signing method is creating the correct signature.
+
+All code samples can be found the [examples](examples) directory and each is accompanied by a README.md file which contains the documentation.
 
 ## Outline
 
