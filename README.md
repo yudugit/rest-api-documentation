@@ -30,6 +30,16 @@ Yudu Publisher REST API v2.0
   - [Dates](#dates)
   - [Booleans](#booleans)
   - [Enumerations](#enumerations)
+- [Example Sessions](#example-sessions)
+  - [Creating A New Reader](#creating-a-new-reader)
+  - [Finding An Edition](#finding-an-edition)
+  - [Creating And Updating A Permission](#creating-and-updating-a-permission)
+  - [Updating A Reader](#updating-a-reader)
+  - [Finding All iDevice Enabled Publications](#finding-all-idevice-enabled-publications)
+  - [Finding A Subscription](#finding-a-subscription)
+  - [Creating A Subscription Period](#creating-a-subscription-period)
+  - [Resetting Authorised Devices](#resetting-authorised-devices)
+  - [Authenticating A Reader](#authenticating-a-reader)
 
 ## Introduction
 
@@ -1017,3 +1027,605 @@ The `platform` enumeration represents a device or platform type. The permissible
 - **air** - an air based app (Android or Desktop)
 - **idevice** - an iOS based app
 - **unknown** - platform could not be determined
+
+## Example Sessions
+
+### Creating A New Reader
+
+We wish to create a new reader at the node "1234". Request the base URI, which provides links to the other resources:
+
+```
+//Request
+GET /Yudu/services/2.0/?timestamp=1412586000 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: YmYtVK8Se2GuFNlGNsRoiBT1WApfF85pPMVETI/FkFo=
+```
+
+``` xml
+//Response
+HTTP/1.1 200 OK
+Date: Mon, 06 Oct 2014 10:00:00 GMT
+Content-Type: application/vnd.yudu+xml
+
+<service xmlns="http://schema.yudu.com">
+  <links>
+    <link rel="http://schema.yudu.com/permissions" name="permissions"
+          href="https://api.yudu.com/Yudu/services/2.0/permissions"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/readerLogins" name="readerLogins"
+          href="https://api.yudu.com/Yudu/services/2.0/readerLogins"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/subscriptions" name="subscriptions"
+          href="https://api.yudu.com/Yudu/services/2.0/subscriptions"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/readers" name="readers"
+          href="https://api.yudu.com/Yudu/services/2.0/readers"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/editions" name="editions"
+          href="https://api.yudu.com/Yudu/services/2.0/editions"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/publications" name="publications"
+          href="https://api.yudu.com/Yudu/services/2.0/publications"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/subscriptionPeriods" name="subscriptionPeriods"
+          href="https://api.yudu.com/Yudu/services/2.0/subscriptionPeriods"
+          type="application/vnd.yudu+xml"/>
+  </links>
+</service>
+```
+
+This tells us that there are seven links, with the relations defined as above.
+
+We want to create a new reader, and we know from the link relations that we can do this by submitting a **POST** request containing a `reader` to a link of type `http://schema.yudu.com/readers`. We check this operation is permitted by submitting an **OPTIONS** request to the URI provided in the `readers` link.
+
+```
+//Request
+OPTIONS /Yudu/services/2.0/readers?timestamp=1412586005 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: 6XjiQUH2PTRDLXFtzRSGZQ20Fl7yOSOA2h2DA/V/jtw=
+```
+
+```
+//Response
+HTTP/1.1 204 No Content
+Date: Mon, 06 Oct 2014 10:00:05 GMT
+Allow: OPTIONS,POST,GET,HEAD
+```
+
+The `Allow` header tells us that the **POST** method is allowed for this resource so we submit a **POST** request containing a `reader` representation.
+
+``` xml
+//Request
+POST /Yudu/services/2.0/readers?timestamp=1412586010 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: YmYtVK8Se2GuFNlGNsRoiBT1WApfF85pPMVETI/FkFo=
+
+<reader xmlns="http://schema.yudu.com">
+  <username>example</username>
+  <emailAddress>user@example.com</emailAddress>
+  <firstName>Example</firstName>
+  <lastName>User</lastName>
+  <password>password</password>
+  <nodeId>1234</nodeId>
+</reader>
+```
+
+``` xml
+//Response
+HTTP/1.1 201 CREATED
+Date: Mon, 11 Jul 2011 10:00:10 GMT
+Content-Type: application/vnd.yudu+xml
+Location: https://api.yudu.com/Yudu/services/1.0/readers/5678
+
+<reader xmlns="http://schema.yudu.com" id="5678">
+  <username>example</username>
+  <emailAddress>user@example.com</emailAddress>
+  <firstName>Example</firstName>
+  <lastName>User</lastName>
+  <authorisedDeviceLimit>3</authorisedDeviceLimit>
+  <nodeId>1234</nodeId>
+  <links>
+    <link rel="http://schema.yudu.com/reader" name="self"
+          href="https://api.yudu.com/Yudu/services/2.0/readers/5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/permissions" name="permissions"
+          href="https://api.yudu.com/Yudu/services/2.0/permissions?reader=5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/readerLogins" name="readerLogins"
+          href="https://api.yudu.com/Yudu/services/2.0/readerLogins?reader=5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/subscriptions" name="subscriptions"
+          href="https://api.yudu.com/Yudu/services/2.0/subscriptions?reader=5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/authorisedDevices" name="authorisedDevices"
+          href="https://api.yudu.com/Yudu/services/2.0/readers/5678/authorisedDevices"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/authentication" name="authentication"
+          href="https://api.yudu.com/Yudu/services/2.0/readers/5678/authentication"
+          type="application/vnd.yudu+xml"/>
+  </links>
+</reader>
+```
+
+The response has returned the location of our new reader object in the `Location` header and the representation of the resource.
+
+### Finding An Edition
+
+We wish to find all editions with a name starting with "Examp". Make a **GET** request to the editions endpoint with the query parameter `name=Example`:
+
+```
+//Request
+GET /Yudu/services/1.0/editions?name=Examp&timestamp=1412586015 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: k9PUkF0Vy9nQPnd5Dm6zRsXTyseOdlF+3F3/Bm0XUqY=
+```
+
+``` xml
+//Response
+HTTP/1.1 200 OK
+Date: Mon, 06 Oct 2014 10:00:15 GMT
+Content-Type: application/vnd.yudu+xml
+
+<editions xmlns="http://schema.yudu.com" limit="100" offset="0" total="2" truncated="falase">
+  <editionList>
+    <edition id="5678">
+      <name>Example 1</name>
+      <publishedDate>2011-01-20T00:00:00Z</publishedDate>
+      <links>
+        <link rel="http://schema.yudu.com/edition" name="self"
+              href="https://api.yudu.com/Yudu/services/2.0/editions/5678"
+              type="application/vnd.yudu+xml"/>
+        <link rel="http://schema.yudu.com/permissions" name="permissions"
+              href="https://api.yudu.com/Yudu/services/2.0/permissions?edition=5678"
+              type="application/vnd.yudu+xml"/>
+        <link rel="http://schema.yudu.com/subscriptions" name="subscriptions"
+              href="https://api.yudu.com/Yudu/services/2.0/subscriptions?edition=5678"
+              type="application/vnd.yudu+xml"/>
+      </links>
+    </edition>
+    <edition id="9012">
+      <name>Example 2</name>
+      <publishedDate>2011-01-27T12:24:00Z</publishedDate>
+      <links>
+        <link rel="http://schema.yudu.com/edition" name="self"
+              href="https://api.yudu.com/Yudu/services/2.0/editions/9012"
+              type="application/vnd.yudu+xml"/>
+        <link rel="http://schema.yudu.com/permissions" name="permissions"
+              href="https://api.yudu.com/Yudu/services/2.0/permissions?edition=9012"
+              type="application/vnd.yudu+xml"/>
+        <link rel="http://schema.yudu.com/subscriptions" name="subscriptions"
+              href="https://api.yudu.com/Yudu/services/2.0/subscriptions?edition=9012"
+              type="application/vnd.yudu+xml"/>
+      </links>
+    </edition>
+  </editionList>
+  <links/>
+</editions>
+```
+
+The response body contains an edition list representation. Note that since the resulting list has not been truncated the `editions` element contains an empty `links` element as there are no further pages of results to navigate.
+
+### Creating And Updating A Permission
+
+Given the above examples, we can now create a permission for this reader and one of the editions we found:
+
+``` xml
+//Request
+POST /Yudu/services/1.0/permissions?timestamp=1412586020 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: Xmvv80WIub0NazhL8TV50h4wxWxHuUs9cVYeASnoTFE=
+
+<permission xmlns="http://schema.yudu.com">
+  <reader id="5678"/>
+  <edition id="9012"/>
+</permission>
+```
+
+``` xml
+//Response
+HTTP/1.1 201 CREATED
+Date: Mon, 06 Oct 2014 10:00:20 GMT
+Content-Type: application/vnd.yudu+xml
+Location: https://api.yudu.com/Yudu/services/1.0/permissions/3456
+
+<permission id="3456">
+  <reader id="5678"/>
+  <edition id="9012"/>
+  <creationDate>2014-10-06T10:00:20Z</creationDate>
+  <links>
+    <link rel="http://schema.yudu.com/permission" name="self"
+          href="https://api.yudu.com/Yudu/services/2.0/permissions/3456"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/reader" name="reader"
+          href="https://api.yudu.com/Yudu/services/2.0/readers/5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/edition" name="edition"
+          href="https://api.yudu.com/Yudu/services/2.0/editions/9012"
+          type="application/vnd.yudu+xml"/>
+  </links>
+</permission>
+```
+
+Now we update the permission and add an expiry date:
+
+``` xml
+//Request
+PUT /Yudu/services/1.0/permissions/3456?timestamp=1412586025 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: 4fUApJWR72cBwYfB00AtcJht5OhwhpuW9QCNq9jFePY=
+
+<permission xmlns="http://schema.yudu.com" id="3456">
+  <expiryDate>2015-06-01T00:00:00Z</expiryDate>
+</permission>
+```
+
+``` xml
+//Response
+HTTP/1.1 200 OK
+Date: Mon, 06 Oct 2014 10:00:25 GMT
+Content-Type: application/vnd.yudu+xml
+
+<permission id="3456">
+  <reader id="5678"/>
+  <edition id="9012"/>
+  <creationDate>2014-10-06T10:00:20Z</creationDate>
+  <expiryDate>2015-06-01T00:00:00Z</expiryDate>
+  <links>
+    <link rel="http://schema.yudu.com/permission" name="self"
+          href="https://api.yudu.com/Yudu/services/2.0/permissions/3456"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/reader" name="reader"
+          href="https://api.yudu.com/Yudu/services/2.0/readers/5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/edition" name="edition"
+          href="https://api.yudu.com/Yudu/services/2.0/editions/9012"
+          type="application/vnd.yudu+xml"/>
+  </links>
+</permission>
+```
+
+### Updating A Reader
+
+Suppose we need to change a reader's password:
+
+``` xml
+//Request
+PUT /Yudu/services/1.0/readers/5678?timestamp=1412586030 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: VN7B4U5Uv4X4Yx+2qt7WUzCLBbb7Ssejaf1XHOmtACI=
+
+<reader xmlns="http://schema.yudu.com" id="5678">
+  <password>newPassword</password>
+</reader>
+```
+
+``` xml
+//Response
+HTTP/1.1 200 OK
+Date: Mon, 06 Oct 2014 10:00:30 GMT
+Content-Type: application/vnd.yudu+xml
+
+<reader xmlns="http://schema.yudu.com" id="5678">
+  <username>example</username>
+  <emailAddress>user@example.com</emailAddress>
+  <firstName>Example</firstName>
+  <lastName>User</lastName>
+  <authorisedDeviceLimit>3</authorisedDeviceLimit>
+  <nodeId>1234</nodeId>
+  <links>
+    <link rel="http://schema.yudu.com/reader" name="self"
+          href="https://api.yudu.com/Yudu/services/2.0/readers/5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/permissions" name="permissions"
+          href="https://api.yudu.com/Yudu/services/2.0/permissions?reader=5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/readerLogins" name="readerLogins"
+          href="https://api.yudu.com/Yudu/services/2.0/readerLogins?reader=5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/subscriptions" name="subscriptions"
+          href="https://api.yudu.com/Yudu/services/2.0/subscriptions?reader=5678"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/authorisedDevices" name="authorisedDevices"
+          href="https://api.yudu.com/Yudu/services/2.0/readers/5678/authorisedDevices"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/authentication" name="authentication"
+          href="https://api.yudu.com/Yudu/services/2.0/readers/5678/authentication"
+          type="application/vnd.yudu+xml"/>
+  </links>
+</reader>
+
+```
+
+### Finding All iDevice Enabled Publications
+
+Suppose we wish to find all iDevice enabled publications. Suppose further that we wish to see 2 publications at a time and navigate through the whole list:
+
+```
+//Request
+GET /Yudu/services/1.0/publications/?iDeviceEnabled=true&limit=2&timestamp=1412586035 HTTP/1.1
+Host: api.yudu.com
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: qXRVLXasp6li50Z2WAsn9WSiWeDWz54seyFdisRYbew=
+```
+
+``` xml
+//Response
+HTTP/1.1 200 OK
+Date: Mon, 06 Oct 2014 10:00:35 GMT
+Content-Type: application/vnd.yudu+xml
+
+<publications xmlns="http://schema.yudu.com" limit="2" offset="0" total="3" truncated="true">
+  <publicationList>
+    <publication id="2345">
+      <name>Publication 1</name>
+      <iDeviceEnabled>true</iDeviceEnabled>
+      <androidEnabled>false</androidEnabled>
+      <links>
+        <link rel="self" name="self"
+              href="https://api.yudu.com/Yudu/services/1.0/publications/2345"
+              type="application/vnd.yudu+xml"/>
+      </links>
+    </publication>
+    <publication id="6789">
+      <name>Publication 2</name>
+      <iDeviceEnabled>true</iDeviceEnabled>
+      <androidEnabled>true</androidEnabled>
+      <links>
+        <link rel="self" name="self"
+              href="https://api.yudu.com/Yudu/services/1.0/publications/6789"
+              type="application/vnd.yudu+xml"/>
+      </links>
+    </publication>
+  <publicationList>
+  <links>
+    <link rel="http://schema.yudu.com/publications" name="next"
+          href="http://api.yudu.com/Yudu/services/2.0/publications?limit=2&amp;offset=2"
+          type="application/vnd.yudu+xml"/>
+  </links>
+</publications>
+```
+
+We can see that there were 3 results and we are only seeing the first two, as per our `limit` parameter. Now we can see the next result by following the `next` link, which adds an `offset=2` parameter.
+
+```
+//Request
+GET /Yudu/services/1.0/publications/?iDeviceEnabled=true&limit=2&offset=2&timestamp=1412586040 HTTP/1.1
+Host: api.yudu.com
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: 5P4EF0iS/trLXUWZ0e6U+WSbfX3oBAy0YirfWOwx6KM=
+```
+
+``` xml
+//Response
+HTTP/1.1 200 OK
+Date: Mon, 06 Oct 2014 10:00:40 GMT
+Content-Type: application/vnd.yudu+xml
+
+<publications xmlns="http://schema.yudu.com" limit="2" offset="2" total="3" truncated="true">
+  <publicationList>
+    <publicationid="4321">
+      <name>Publication 3</name>
+      <iDeviceEnabled>true</iDeviceEnabled>
+      <androidEnabled>false</androidEnabled>
+      <links>
+        <link rel="self" name="self"
+              href="https://api.yudu.com/Yudu/services/1.0/publications/4321"
+              type="application/vnd.yudu+xml"/>
+      </links>
+    </publication>
+  <publicationList>
+  <links>
+    <link rel="http://schema.yudu.com/publications" name="previous"
+          href="http://api.yudu.com/Yudu/services/2.0/publications?limit=2&amp;offset=0"
+          type="application/vnd.yudu+xml"/>
+  </links>
+</publications>
+```
+
+Now the service returns the final publication and the only link available is the `previous` link to take us back to an offset of 0.
+
+### Finding A Subscription
+
+Suppose we wish to find all subscriptions which contain the edition with id 5678. Furthermore, suppose we wish to order the results by subscriptionType, in descending order:
+
+```
+//Request
+GET /Yudu/services/1.0/subscriptions/?edition=5678&sort=subscriptionType_desc&timestamp=1412586045 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: ipNslQR4oH6lWhx9Kqr5pNKs7T8zg6TNzgifWnQtl8M=
+```
+
+``` xml
+//Response
+HTTP/1.1 200 OK
+Date: Mon, 06 Oct 2014 10:00:45 GMT
+Content-Type: application/vnd.yudu+xml
+
+<subscriptions xmlns="http://schema.yudu.com" limit="100" offset="0" count="2" truncated="false">
+  <subscriptionList>
+    <subscription id="9876">
+      <title>Universal Subscription</title>
+      <onDeviceTitle>subscription on device</onDeviceTitle>
+      <subscriptionType>universal_club</subscriptionType>
+      <disabled>false</disabled>
+      <defaultAuthorisedDeviceLimit>6</defaultAuthorisedDeviceLimit>
+      <nodeId>1234</nodeId>
+      <links>
+        <link rel="http://schema.yudu.com/subscription" name="self"
+              href="https://api.yudu.com/Yudu/services/2.0/subscriptions/9876"
+              type="application/vnd.yudu+xml"/>
+        <link rel="http://schema.yudu.com/readers" name="readers"
+              href="https://api.yudu.com/Yudu/services/2.0/readers?subscription=9876"
+              type="application/vnd.yudu+xml"/>
+        <link rel="http://schema.yudu.com/editions" name="editions"
+              href="https://api.yudu.com/Yudu/services/2.0/editions?subscription=9876"
+              type="application/vnd.yudu+xml"/>
+      </links>
+    </subscription>
+    <subscription id="5432">
+      <title>Example Subscription</title>
+      <onDeviceTitle>A Subscription</onDeviceTitle>
+      <subscriptionType>flash_node</subscriptionType>
+      <disabled>true</disabled>
+      <defaultAuthorisedDeviceLimit>3</defaultAuthorisedDeviceLimit>
+      <nodeId>1234</nodeId>
+      <links>
+        <link rel="http://schema.yudu.com/subscription" name="self"
+              href="https://api.yudu.com/Yudu/services/2.0/subscriptions/5432"
+              type="application/vnd.yudu+xml"/>
+        <link rel="http://schema.yudu.com/readers" name="readers"
+              href="https://api.yudu.com/Yudu/services/2.0/readers?subscription=5432"
+              type="application/vnd.yudu+xml"/>
+        <link rel="http://schema.yudu.com/editions" name="editions"
+              href="https://api.yudu.com/Yudu/services/2.0/editions?subscription=5432"
+              type="application/vnd.yudu+xml"/>
+      </links>
+    </subscription>
+  </subscriptionList>
+  <links/>
+</subscriptions>
+```
+
+### Creating A Subscription Period
+
+Given the above examples, we can now create a subscription period for a reader and subscription:
+
+``` xml
+//Request
+POST /Yudu/services/1.0/subscriptionPeriods/?timestamp=1412586050 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: azckQ5GtqtDQe0EW6v5EBsC79QMXg9e/k1yezUKPFjA=
+
+<subscriptionPeriod xmlns="http://schema.yudu.com">
+  <reader id="1234"/>
+  <subscription id="9876"/>
+  <startDate>2014-11-01T00:00:00Z</startDate>
+  <expiryDate>2016-11-01T00:00:00Z</expiryDate>
+</subscriptionPeriod>
+```
+
+``` xml
+//Response
+HTTP/1.1 201 CREATED
+Date: Mon, 06 Oct 2014 10:00:50 GMT
+Content-Type: application/vnd.yudu+xml
+Location: https://api.yudu.com/Yudu/services/1.0/subscriptionPeriods/7654
+
+<subscriptionPeriod xmlns="http://schema.yudu.com" id="7654">
+  <reader id="1234"/>
+  <subscription id="9876"/>
+  <startDate>2014-11-01T00:00:00Z</startDate>
+  <expiryDate>2016-11-01T00:00:00Z</expiryDate>
+  <links>
+    <link rel="http://schema.yudu.com/subscriptionPeriod" name="self"
+          href="https://api.yudu.com/Yudu/services/2.0/subscriptionPeriods/7654"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/reader" name="reader"
+          href="https://api.yudu.com/Yudu/services/2.0/readers/1234"
+          type="application/vnd.yudu+xml"/>
+    <link rel="http://schema.yudu.com/subscription" name="subscription"
+          href="https://api.yudu.com/Yudu/services/2.0/subscriptions/9876"
+          type="application/vnd.yudu+xml"/>
+  </links>
+</subscriptionPeriod>
+```
+
+### Resetting Authorised Devices
+
+Suppose a reader has logged in from too many different devices and you would like to reset their authorised devices so that they can log in from a new collection of devices. This is achieved by deleting all authorised devices associated with the reader:
+
+``` xml
+//Request
+DELETE /Yudu/services/1.0/readers/1234/authorisedComputers/?timestamp=1412586055 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: bGCNgoiseJ7qom8R1czUxoBlmMTSkpRgeccVOQO+VoY=
+
+//Response
+HTTP/1.1 204 NO CONTENT
+Date: Mon, 06 Oct 2014 10:00:55 GMT
+```
+
+### Authenticating A Reader
+
+Given a the username and password for a reader we can check whether such a reader exists and whether the password submitted by the reader is correct. First find a reader.
+
+``` xml
+//Request
+GET /Yudu/services/1.0/readers/?username=example&timestamp=1412586060 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: h/jKtsHKkNvAb87mElz5xFr9y7/9XaZGcD8qDwjgiFo=
+
+//Response
+HTTP/1.1 200 OK
+Date: Mon, 11 Jul 2011 10:01:00 GMT
+Content-Type: application/vnd.yudu+xml
+
+<readers xmlns="http://schema.yudu.com" limit="100" offset="0" count="1" truncated="false">
+  <reader id="5678">
+    <username>example</username>
+    <emailAddress>user@example.com</emailAddress>
+    <firstName>Example</firstName>
+    <lastName>User</lastName>
+    <authorisedDeviceLimit>3</authorisedDeviceLimit>
+    <nodeId>1234</nodeId>
+    <links>
+      <link rel="http://schema.yudu.com/reader" name="self"
+            href="https://api.yudu.com/Yudu/services/2.0/readers/5678"
+            type="application/vnd.yudu+xml"/>
+      <link rel="http://schema.yudu.com/permissions" name="permissions"
+            href="https://api.yudu.com/Yudu/services/2.0/permissions?reader=5678"
+            type="application/vnd.yudu+xml"/>
+      <link rel="http://schema.yudu.com/readerLogins" name="readerLogins"
+            href="https://api.yudu.com/Yudu/services/2.0/readerLogins?reader=5678"
+            type="application/vnd.yudu+xml"/>
+      <link rel="http://schema.yudu.com/subscriptions" name="subscriptions"
+            href="https://api.yudu.com/Yudu/services/2.0/subscriptions?reader=5678"
+            type="application/vnd.yudu+xml"/>
+      <link rel="http://schema.yudu.com/authorisedDevices" name="authorisedDevices"
+            href="https://api.yudu.com/Yudu/services/2.0/readers/5678/authorisedDevices"
+            type="application/vnd.yudu+xml"/>
+      <link rel="http://schema.yudu.com/authentication" name="authentication"
+            href="https://api.yudu.com/Yudu/services/2.0/readers/5678/authentication"
+            type="application/vnd.yudu+xml"/>
+    </links>
+  </reader>
+</readers>
+```
+
+Then follow the authentication link for the reader and make a **PUT** with an authentication representation:
+
+``` xml
+//Request
+PUT /Yudu/services/1.0/readers/?username=aUsername&timestamp=1412586065 HTTP/1.1
+Accept: application/vnd.yudu+xml
+Authentication: abcd1234
+Signature: ujp8wI5gGPwIBON3lzQD/ZY5qtR3zLBd/zKc4aNF5/c=
+
+<authentication xmlns="http://schema.yudu.com">
+  <password>userPassword</password>
+</authentication>
+
+//Response
+HTTP/1.1 200 OK
+Date: Mon, 11 Jul 2011 10:01:05 GMT
+Content-Type: application/vnd.yudu+xml
+
+<authentication xmlns="http://schema.yudu.com">
+  <authenticated>false</authenticated>
+</authentication>
+```
+
+The reader's password is not correct.
