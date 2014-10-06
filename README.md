@@ -1,6 +1,36 @@
 Yudu Publisher REST API v2.0
 ============================
 
+## Table of Contents
+
+- [Introduction](#introduction)
+  - [Overview](#overview)
+  - [Terminology](#terminology)
+  - [Overview](#overview-1)
+  - [Sample code](#sample-code)
+- [Outline](#outline)
+  - [Resources](#resources)
+  - [Verbs](#verbs)
+  - [Relations](#relations)
+  - [URI Summary](#uri-summary)
+- [Resources](#resources-1)
+  - [Service Description](#service-description)
+  - [Reader](#reader)
+  - [Edition](#edition)
+  - [Permission](#permission)
+  - [Subscription](#subscription)
+  - [Subscription Period](#subscription-period)
+  - [Reader Login](#reader-login)
+  - [Authorised Device](#authorised-device)
+  - [Authentication](#authentication)
+- [Technical Details](#technical-details)
+  - [Request Authentication](#request-authentication)
+  - [Exceptions](#exceptions)
+  - [Pagination](#pagination)
+  - [Dates](#dates)
+  - [Booleans](#booleans)
+  - [Enumerations](#enumerations)
+
 ## Introduction
 
 This Document outlines the web service interface provided by YUDU to enable management of readers, purchases and subscriptions for digital editions.
@@ -11,7 +41,7 @@ The documentation for the older v1.0 API is available [here](https://github.com/
 
 ### Overview
 
-The Yudu API uses the "Representational state transfer" (REST) architectural style. In particular, it applies the "hypermedia as the engine of application state" (HATEOAS) principle in the design of the resources. If you are not already familiar with these principles then we recommend reading [REST in Practice](http://restinpractice.com/book/) as an introduction before diving further into the Yudu API.
+The Yudu API uses the "Representational state transfer" (REST) architectural style. In particular, it applies the "hypermedia as the engine of application state" ([HATEOAS](http://en.wikipedia.org/wiki/HATEOAS)) principle in the design of the resources. If you are not already familiar with these principles then we recommend reading [REST in Practice](http://restinpractice.com/book/) as an introduction before diving further into the Yudu API.
 
 ### Terminology
 
@@ -33,19 +63,19 @@ This service is arranged into **resources**, such as readers and their permissio
 
 ### Sample code
 
-#### PHP Client
-
-We have produced a sample PHP application that shows the use of the API. Note that this code is not ready for production use, and serves as an example only. It is not extensively tested and does not handle every possible error case in a suitable manner for production use. In addition, it does not represent best practices for implementing a client of the API. For example, as noted below, rather than using the URIs as described, you are encouraged to make use of the hypermedia present in the resources to navigate the API, decoupling your implementation from ours.
-
-#### Java Client
-
-We have produced a simple GUI java application that can be used to build and send requests to our service. Note that as for the PHP client, this code is not reader for production use and serves as an example only. 
-
-#### Ruby Client
-
-We have produced a simple ruby command line tool to calculate the correct Base64 encoded HMAC SHA256 hash for any string and shared secret (see [Request Authentication](#request-authentication)). This can be used to check that your signing method is creating the correct signature.
-
 All code samples can be found the [examples](examples) directory and each is accompanied by a README.md file which contains the documentation.
+
+#### [PHP Client](examples/phpClient)
+
+A sample PHP application that shows the use of the API. Note that this code is not ready for production use, and serves as an example only. It is not extensively tested and does not handle every possible error case in a suitable manner for production use. In addition, it does not represent best practices for implementing a client of the API. For example, as noted below, rather than using the URIs as described, you are encouraged to make use of the hypermedia present in the resources to navigate the API, decoupling your implementation from ours.
+
+#### [Java Client](examples/javaClient)
+
+A sample GUI java application that can be used to build and send requests to our service. Note that as for the PHP client, this code is not reader for production use and serves as an example only. 
+
+#### [Ruby Command Line Tool](examples/rubyCommandLineTool)
+
+A basic ruby command line tool to calculate the correct Base64 encoded HMAC SHA256 hash for any string and shared secret (see [Request Authentication](#request-authentication)). This can be used to check that your signing method is creating the correct signature.
 
 ## Outline
 
@@ -90,25 +120,25 @@ In order to determine which verbs can be used to interact with a resource, it is
 
 The following table summarises all the available resource URIs, and the effect of each verb on them. Each of them is relative to the base URI for our API: `https://api.yudu.com/Yudu/services/2.0`.
 
-| Resource                        | GET                                                 | POST                                  | PUT                               | DELETE                                      |
-| ------------------------------- | --------------------------------------------------- | ------------------------------------- | --------------------------------- | ------------------------------------------- |
-| /                               | Returns a list of links to the other available URIs | N/A                                   | N/A                               | N/A                                         |
-| /readers/                       | Returns a list of readers                           | Creates a new reader                  | N/A                               | N/A                                         |
-| /readers/<id>                   | Returns the details of a single reader              | N/A                                   | Updates a reader                  | Deletes a reader                            |
-| /editions/                      | Gets a list of all editions                         | N/A                                   | N/A                               | N/A                                         |
-| /editions/<id>                  | Gets the details of a single edition                | N/A                                   | N/A                               | N/A                                         |
-| /permissions/                   | Lists all edition permissions by readers            | Creates a new permission for a reader | N/A                               | N/A                                         |
-| /permissions/<id>               | Gets the details of a single permission             | N/A                                   | Updates a permission              | Removes an existing permission              |
-| /readerLogins/                  | Gets a list of all reader logins                    | N/A                                   | N/A                               | N/A                                         |
-| /readerLogins/<id>              | Gets the details of a single reader login           | N/A                                   | N/A                               | N/A                                         |
-| /publications/                  | Gets a list of all publications                     | N/A                                   | N/A                               | N/A                                         |
-| /publications/<id>              | Gets the details of a single publication            | N/A                                   | N/A                               | N/A                                         |
-| /subscriptions/                 | Gets a list of subscriptions                        | N/A                                   | N/A                               | N/A                                         |
-| /subscriptions/<id>             | Gets the details of a single subscription           | N/A                                   | N/A                               | N/A                                         |
-| /subscriptionPeriods/           | Gets a list of subscription periods                 | N/A                                   | N/A                               | N/A                                         |
-| /subscriptionPeriods/<id>       | Gets the details of a single subscription period    | Creates a new subscription period     | Updates a subscription period     | Removes an existing subscription period     |
-| /readers/<id>/authorisedDevices | N/A                                                 | N/A                                   | N/A                               | Removes all authorised devices for a reader |
-| /readers/<id>/authentication    | N/A                                                 | N/A                                   | Authenticates a reader's password | N/A                                         |
+| Resource                                              | GET                                                 | POST                                  | PUT                               | DELETE                                      |
+| ----------------------------------------------------- | --------------------------------------------------- | ------------------------------------- | --------------------------------- | ------------------------------------------- |
+| [/](#service-description)                             | Returns a list of links to the other available URIs | N/A                                   | N/A                               | N/A                                         |
+| [/readers/](#reader)                                 | Returns a list of readers                           | Creates a new reader                  | N/A                               | N/A                                         |
+| [/readers/{id}](#reader)                             | Returns the details of a single reader              | N/A                                   | Updates a reader                  | Deletes a reader                            |
+| [/editions/](#edition)                               | Gets a list of all editions                         | N/A                                   | N/A                               | N/A                                         |
+| [/editions/{id}](#edition)                           | Gets the details of a single edition                | N/A                                   | N/A                               | N/A                                         |
+| [/permissions/](#permission)                         | Lists all edition permissions by readers            | Creates a new permission for a reader | N/A                               | N/A                                         |
+| [/permissions/{id}](#permission)                     | Gets the details of a single permission             | N/A                                   | Updates a permission              | Removes an existing permission              |
+| [/readerLogins/](#reader-login)                      | Gets a list of all reader logins                    | N/A                                   | N/A                               | N/A                                         |
+| [/readerLogins/{id}](#reader-login)                  | Gets the details of a single reader login           | N/A                                   | N/A                               | N/A                                         |
+| [/publications/](#publication)                       | Gets a list of all publications                     | N/A                                   | N/A                               | N/A                                         |
+| [/publications/{id}](#publication)                   | Gets the details of a single publication            | N/A                                   | N/A                               | N/A                                         |
+| [/subscriptions/](#subscription)                     | Gets a list of subscriptions                        | N/A                                   | N/A                               | N/A                                         |
+| [/subscriptions/{id}](#subscription)                 | Gets the details of a single subscription           | N/A                                   | N/A                               | N/A                                         |
+| [/subscriptionPeriods/](#subscription-period)        | Gets a list of subscription periods                 | N/A                                   | N/A                               | N/A                                         |
+| [/subscriptionPeriods/{id}](#subscription-period)    | Gets the details of a single subscription period    | Creates a new subscription period     | Updates a subscription period     | Removes an existing subscription period     |
+| [/readers/{id}/authorisedDevices](#authorised-device) | N/A                                                 | N/A                                   | N/A                               | Removes all authorised devices for a reader |
+| [/readers/{id}/authentication](#authentication)       | N/A                                                 | N/A                                   | Authenticates a reader's password | N/A                                         |
 
 ## Resources
 
@@ -129,7 +159,7 @@ In the XML descriptions of each resource the `link` elements within the `links` 
 
 ### Service Description
 
-While not technically a resource this endpoint is the starting point for any interaction with the API. It is assumed thata user of the API does not know how to construct the URIs for any resource or the IDs or URIs of any existing resource. Instead a user starts at the service description and follows links to navigate the resource.
+While not technically a resource this endpoint is the starting point for any interaction with the API. It is assumed that a user of the API does not know how to construct the URIs for any resource or the IDs or URIs of any existing resource. Instead a user starts at the service description and follows links to navigate the resource.
 
 #### XML Representation
 
@@ -314,13 +344,13 @@ A **GET** request returns the XML representation of a list of editions, optional
 | ------ | ---- | ----------- |
 | **name** | String | Filter by edition name *prefix* |
 | **subscription** | Integer | Return only editions shipped to the subscription with the given ID |
-| **publishedDate\_after** | [Date](#date) |  Return only editions with an official publication date *after* the given date |
-| **publishedDate\_before** | [Date](#date) | Return only editions with an official publication date *before* the given date |
-| **flashPublished** | [Boolean](boolean) | Return only editions which are published (or not published) on the flash platform |
-| **iOSPublished** | [Boolean](boolean) | Return only editions which are published (or not published) on the iOS platform |
-| **androidPublished** | [Boolean](boolean) | Return only editions which are published (or not published) on the android platform
-| **htmlPublished** | [Boolean](boolean) | Return only editions which are published (or not published) on the HTML5 platform |
-| **webPublished** | [Boolean](boolean) | Return only editions which are published (or not published) on the combined web platform |
+| **publishedDate\_after** | [Date](#dates) |  Return only editions with an official publication date *after* the given date |
+| **publishedDate\_before** | [Date](#dates) | Return only editions with an official publication date *before* the given date |
+| **flashPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the flash platform |
+| **iOSPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the iOS platform |
+| **androidPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the android platform
+| **htmlPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the HTML5 platform |
+| **webPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the combined web platform |
 
 #### Single Edition
 
@@ -400,10 +430,10 @@ A **GET** request returns the XML representation of a list of permissions, optio
 | ------ | ---- | ----------- |
 | **reader** | Integer | Return only permissions for the reader with then given ID |
 | **edition** | Integer | Return only permissions for the edition with then given ID |
-| **creationDate\_after** | [Date](#date) |  Return only permissions with a creation date *after* the given date |
-| **creationDate\_before** | [Date](#date) | Return only permissions with a creation date *before* the given date |
-| **expiry\_after** | [Date](#date) |  Return only permissions with an expiry date *after* the given date |
-| **expiry\_before** | [Date](#date) | Return only permissions with an expiry date *before* the given date |
+| **creationDate\_after** | [Date](#dates) |  Return only permissions with a creation date *after* the given date |
+| **creationDate\_before** | [Date](#dates) | Return only permissions with a creation date *before* the given date |
+| **expiry\_after** | [Date](#dates) |  Return only permissions with an expiry date *after* the given date |
+| **expiry\_before** | [Date](#dates) | Return only permissions with an expiry date *before* the given date |
 
 ##### POST
 
@@ -489,7 +519,7 @@ A **GET** request returns the XML representation of a list of subscriptions, opt
 | ------ | ---- | ----------- |
 | **title** | String | Filter by subscription title *prefix* |
 | **onDeviceTitle** | String | Filter by on device title *prefix* |
-| **disabled** | [Boolean](boolean) | Return only subscriptions which are disable (or not disabled) |
+| **disabled** | [Boolean](#booleans) | Return only subscriptions which are disable (or not disabled) |
 | **subscriptionType** | [SubscriptionType](#subscriptiontype) | Filter by the subscription type |
 | **node** | Integer |  Return only subscriptions at a particular node |
 | **reader** | Integer | Return only subscriptions to which the reader with the given ID is subscribed |
@@ -574,10 +604,10 @@ A **GET** request returns the XML representation of a list of subscriptionPeriod
 | ------ | ---- | ----------- |
 | **reader** | Integer | Return only subscription periods for the reader with then given ID |
 | **subscription** | Integer | Return only subscription periods for the subscription with then given ID |
-| **startDate\_after** | [Date](#date) |  Return only subscription periods with a start date date *after* the given date |
-| **startDate\_before** | [Date](#date) | Return only subscription periods with a start date date *before* the given date |
-| **expiry\_after** | [Date](#date) |  Return only subscription periods with an expiry date *after* the given date |
-| **expiry\_before** | [Date](#date) | Return only subscription periods with an expiry date *before* the given date |
+| **startDate\_after** | [Date](#dates) |  Return only subscription periods with a start date date *after* the given date |
+| **startDate\_before** | [Date](#dates) | Return only subscription periods with a start date date *before* the given date |
+| **expiry\_after** | [Date](#dates) |  Return only subscription periods with an expiry date *after* the given date |
+| **expiry\_before** | [Date](#dates) | Return only subscription periods with an expiry date *before* the given date |
 
 ##### POST
 
@@ -663,8 +693,8 @@ A **GET** request returns the XML representation of a list of reader logins, opt
 | ------ | ---- | ----------- |
 | **reader** | Integer | Return only reader logins by the reader with the given ID |
 | **node** | Integer |  Return only reader logins to the given node ID |
-| **loginDate\_after** | [Date](#date) |  Return only reader logins *after* the given date |
-| **loginDate\_before** | [Date](#date) | Return only reader logins *before* the given date |
+| **loginDate\_after** | [Date](#dates) |  Return only reader logins *after* the given date |
+| **loginDate\_before** | [Date](#dates) | Return only reader logins *before* the given date |
 | **platform** | [Platform](#platform) | Filter by the platform the reader logged in from |
 | **emailAddress** | String | Filter by email address *prefix* |
 
@@ -733,8 +763,8 @@ A **GET** request returns the XML representation of a list of publications, opti
 | Filter | Type | Description |
 | ------ | ---- | ----------- |
 | **name** | String | Filter by publication name *prefix* |
-| **iDeviceEnabled** | [Boolean](boolean) | Return only publications which are enabled (or disabled) on the *idevice* platform |
-| **androidEnabled** | [Boolean](boolean) | Return only publications which are enabled (or disabled) on the *android*  / *air* platform |
+| **iDeviceEnabled** | [Boolean](#booleans) | Return only publications which are enabled (or disabled) on the *idevice* platform |
+| **androidEnabled** | [Boolean](#booleans) | Return only publications which are enabled (or disabled) on the *android*  / *air* platform |
 
 #### Single Publication
 
