@@ -1,6 +1,10 @@
 Yudu Publisher REST API v2.0
 ============================
 
+Looking for v1.0? The documentation is still available [here](https://github.com/yudugit/rest-api-documentation/tree/v1.0).
+
+See the [changelog](CHANGELOG.md) for major changes since v1.0.
+
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -46,8 +50,6 @@ Yudu Publisher REST API v2.0
 This Document outlines the web service interface provided by YUDU to enable management of readers, purchases and subscriptions for digital editions.
 
 Access to the service requires a Yudu Publisher account with the "REST API" permission and a valid API token created through the Yudu Publisher interface.
-
-The documentation for the older v1.0 API is available [here](https://github.com/yudugit/rest-api-documentation/tree/v1.0).
 
 ### Overview
 
