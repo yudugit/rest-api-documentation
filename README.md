@@ -45,7 +45,7 @@ Yudu Publisher REST API v2.0
 
 This Document outlines the web service interface provided by YUDU to enable management of readers, purchases and subscriptions for digital editions.
 
-Access to the service requires a Yudu Publisher account with the "REST API" permission and a valid API token created through thr Yudu Publisher interface.
+Access to the service requires a Yudu Publisher account with the "REST API" permission and a valid API token created through the Yudu Publisher interface.
 
 The documentation for the older v1.0 API is available [here](https://github.com/yudugit/rest-api-documentation/tree/v1.0).
 
@@ -107,9 +107,9 @@ As well as URIs for individual resources, the API defines URIs for *lists* of re
 
 ### Relations
 
-*Relations* or *Link Relations* provide a way to navigate this service. Each XML representation of a resource will contain a number if *links* which reference other URIs. These URIs indicate the logical next steps when using this system.
+*Relations* or *Link Relations* provide a way to navigate this service. Each XML representation of a resource will contain a number of *links* which reference other URIs. These URIs indicate the logical next steps when using this system.
 
-Resource representations returned by this service may contains a `links` element which contains a list of `link` elements detailing a link to another resource or list of resources. They are represented in XML as follows:
+Resource representations returned by this service may contain a `links` element which contains a list of `link` elements detailing a link to another resource or list of resources. They are represented in XML as follows:
 
 ``` xml
   <link rel="http://schema.yudu.com/editions" name="editions"
@@ -124,7 +124,7 @@ The attributes of the `link` element are:
 - `href` - The URI of the linked resource.
 - `type` - The content type of the representation of the resource.
  
-In order to determine which verbs can be used to interact with a resource, it is reccomended to make an **OPTIONS** request to the URI given in the link relation. This will return an `Allow` header containing a comma-separated list of allowed verbs.
+In order to determine which verbs can be used to interact with a resource, it is recommended to make an **OPTIONS** request to the URI given in the link relation. This will return an `Allow` header containing a comma-separated list of allowed verbs.
 
 ### URI Summary
 
@@ -227,7 +227,7 @@ The reader corresponds to a "Subscriber" in Yudu Publisher.
     ⋮ // some reader elements
   </readerList>
   <links>
-    ⋮ // some link elemenets
+    ⋮ // some link elements
   </links>
 </readers>
 ```
@@ -279,7 +279,7 @@ A **GET** request returns the XML representation of a list of readers, optionall
 
 A **POST** request creates a new reader. The request body must contain the XML representation of a reader with the required fields as detailed in [Permissible Fields](#reader-permissible-fields).
 
-A successful **POST** will result in a **201 CREATED** response with a `Location` header specifying the URI of the newly created resource and the repsonse body will contain the XML representation of the resource (including the `id` and `links`).
+A successful **POST** will result in a **201 CREATED** response with a `Location` header specifying the URI of the newly created resource and the response body will contain the XML representation of the resource (including the `id` and `links`).
 
 #### Single Reader
 
@@ -1154,7 +1154,7 @@ The response has returned the location of our new reader object in the `Location
 
 ### Finding An Edition
 
-We wish to find all editions with a name starting with "Examp". Make a **GET** request to the editions endpoint with the query parameter `name=Example`:
+We wish to find all editions with a name starting with "Example". Make a **GET** request to the editions endpoint with the query parameter `name=Example`:
 
 ```
 //Request
@@ -1170,7 +1170,7 @@ HTTP/1.1 200 OK
 Date: Mon, 06 Oct 2014 10:00:15 GMT
 Content-Type: application/vnd.yudu+xml
 
-<editions xmlns="http://schema.yudu.com" limit="100" offset="0" total="2" truncated="falase">
+<editions xmlns="http://schema.yudu.com" limit="100" offset="0" total="2" truncated="false">
   <editionList>
     <edition id="5678">
       <name>Example 1</name>
