@@ -972,7 +972,7 @@ The `sort` query parameter allows the client to choose the order in which the re
 
 For example, suppose we wanted to list editions sorted first by name (ascending) and then by official publication date (descending). That is, we wish for the editions be sorted by the name, and for any two editions with the same name will be sorted with the latest publication date first. In this case we would use the following query parameter:
 
-`sort=name_asc,publishedDate`
+`sort=name_asc,publishedDate_desc`
 
 Note that the order of the attributes is important. We must include the `name_asc` part first to ensure that this is the primary sort criteria.
 
