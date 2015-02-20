@@ -8,7 +8,7 @@ To run these examples you will need to install PHP and Apache. On Windows we rec
 
 You will need to configure Apache to serve the files from this directory. This can be done through WAMP by [adding an alias](http://www.techrepublic.com/blog/smb-technologist/create-aliases-on-your-wamp-server/).
 
-To get the required library dependencies you will need to install the PHP package manager PEAR as described [here](http://bdhacker.wordpress.com/2012/02/18/installing-pear-in-windows-wamp/). If you are missing `go-pear.phar` you can download it [here](http://pear.php.net/go-pear). Once you have installed pear run `pear install HTTP_Request2` to install the libraries used for the REST calls.
+To get the required library dependencies you will need to install the PHP package manager PEAR as described [here](http://bdhacker.wordpress.com/2012/02/18/installing-pear-in-windows-wamp/). If you are missing `go-pear.phar` you can download it [here](http://pear.php.net/go-pear). Once you have installed pear run `pear install HTTP_Request` to install the libraries used for the REST calls. (Please use the older HTTP_Request library to successfully run the example code)
 
 Also ensure that cURL is enabled for your PHP installation by enabling it in your php.ini file or php extensions (which has the name php_curl).
 
