@@ -860,7 +860,7 @@ The query parameters in the URI of each request must include `timestamp` - a [un
 
 #### Signature Header
 
-The shared secret should be used as the signing token used to generate a base-64 encoded HMAC-SH256 hash of a specific string.
+The shared secret should be used as the signing token used to generate a base-64 encoded HMAC-SHA256 hash of a specific string.
 
 The signed string is constructed from the following parts:
 
