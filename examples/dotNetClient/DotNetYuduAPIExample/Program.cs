@@ -25,15 +25,11 @@ namespace DotNetYuduAPIExample
 
         private static void Main()
         {
-
-            var postPath = ReaderPath(UnixTimestamp);
+            var postPath = GetReaderPath();
             var postUri = Domain + postPath;
-
             var stringToSign = string.Format("POST{0}{1}", postPath, PostXml);
             var signature = Signature(stringToSign);
-            Console.WriteLine(signature);
             var postBody = Encoding.UTF8.GetBytes(PostXml);
-
             var request = new RestRequest(Method.POST)
                 .AddHeader("Authentication", ApiKey)
                 .AddHeader("Signature", signature)
@@ -42,22 +38,21 @@ namespace DotNetYuduAPIExample
             var client = new RestClient(postUri);
             var response = client.Execute(request);
 
+            //Print out status code and response body
             Console.WriteLine(response.StatusCode);
             Console.WriteLine(response.Content);
-
         }
 
-        private static string ReaderPath (string timeStamp)
+        private static string GetReaderPath()
         {
-            return string.Format("/Yudu/services/2.0/readers?timestamp={0}", timeStamp);
+            return string.Format("/Yudu/services/2.0/readers?timestamp={0}", GetCurrentUnixTimestamp());
         }
 
-        private static string UnixTimestamp
+        private static string GetCurrentUnixTimestamp()
         {
-            get
-            {
-                return ((int) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds).ToString(CultureInfo.InvariantCulture);
-            }
+            var epoch = new DateTime(1970, 1, 1);
+            var secondsSinceEpoch = (long)(DateTime.UtcNow - epoch).TotalSeconds;
+            return secondsSinceEpoch.ToString(CultureInfo.InvariantCulture);
         }
 
         private static string Signature(string stringToSign)
