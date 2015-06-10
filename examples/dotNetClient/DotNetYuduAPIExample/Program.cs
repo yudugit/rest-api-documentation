@@ -8,8 +8,9 @@ namespace DotNetYuduAPIExample
 {
     internal class Program
     {
-        private const string SecretKey = "Please contact Yudu to obtain this shared secret.";
-        private const string ApiKey = "Please contact Yudu to obtain this API key.";
+        //Please contact Yudu if you don't already have these keys.
+        private const string SecretKey = "(Shared secret goes here)";
+        private const string ApiKey = "(API key goes here)";
         private const string Domain = "https://api.yudu.com";
         private const string PostXml =
 @"<reader xmlns=""http://schema.yudu.com"">
