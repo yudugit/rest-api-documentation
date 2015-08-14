@@ -12,6 +12,7 @@ namespace DotNetYuduAPIExample
         private const string SecretKey = "(Shared secret goes here)";
         private const string ApiKey = "(API key goes here)";
         private const string Domain = "https://api.yudu.com";
+        private const string ServicePathRoot = "/Yudu/services/2.0";
         private const string PostXml =
 @"<reader xmlns=""http://schema.yudu.com"">
 	<username>example</username>
@@ -67,7 +68,7 @@ namespace DotNetYuduAPIExample
 
         private static string GetReaderPath()
         {
-            return string.Format("/Yudu/services/2.0/readers?timestamp={0}", GetCurrentUnixTimestamp());
+            return string.Format("{0}/readers?timestamp={1}", ServicePathRoot, GetCurrentUnixTimestamp());
         }
 
         private static string GetCurrentUnixTimestamp()
