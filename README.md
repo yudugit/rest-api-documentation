@@ -77,13 +77,15 @@ This service is arranged into **resources**, such as readers and their permissio
 
 All code samples can be found the [examples](examples) directory and each is accompanied by a README.md file which contains the documentation.
 
+Please note that these examples generally do not represent best practices for implementing clients of the API. For example, as noted below, rather than using the URIs as described, you are encouraged to make use of the hypermedia present in the resources to navigate the API, decoupling your implementation from ours. Unless otherwise stated, these examples should be treated as proof-of-concepts only, and not as applications ready for production use.
+
 #### [PHP Client](examples/phpClient)
 
-A sample PHP application that shows the use of the API. Note that this code is not ready for production use, and serves as an example only. It is not extensively tested and does not handle every possible error case in a suitable manner for production use. In addition, it does not represent best practices for implementing a client of the API. For example, as noted below, rather than using the URIs as described, you are encouraged to make use of the hypermedia present in the resources to navigate the API, decoupling your implementation from ours.
+A sample PHP application that shows the use of the API. In particular, this example is not extensively tested and does not handle every possible error case in a suitable manner for production use.
 
 #### [Java Client](examples/javaClient)
 
-A sample GUI java application that can be used to build and send requests to our service. Note that as for the PHP client, this code is not reader for production use and serves as an example only. 
+A sample GUI java application that can be used to build and send requests to our service.
 
 #### [.NET Client](examples/dotNetClient)
 
