@@ -85,6 +85,10 @@ A sample PHP application that shows the use of the API. Note that this code is n
 
 A sample GUI java application that can be used to build and send requests to our service. Note that as for the PHP client, this code is not reader for production use and serves as an example only. 
 
+#### [.NET Client](examples/dotNetClient)
+
+A sample .NET console application that demonstrates how to build and send requests to our service.
+
 #### [Ruby Command Line Tool](examples/rubyCommandLineTool)
 
 A basic ruby command line tool to calculate the correct Base64 encoded HMAC SHA256 hash for any string and shared secret (see [Request Authentication](#request-authentication)). This can be used to check that your signing method is creating the correct signature.
