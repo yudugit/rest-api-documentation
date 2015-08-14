@@ -950,6 +950,10 @@ In addition to standard HTTP status codes the service returns a descriptive code
 - **CLIENT_ERROR** - A bad request has been sent by the client.
 - **SERVER_ERROR** - An unknown internal error occurred.
 
+### A Word About Request Media Types
+
+The media type of all communications with the server should be of the form `application/vnd.yudu+xml`. Thus this type should always be included in an appropriate `Accept` header, and when necessary, specified as the type of any POST data. Please see the [Example Sessions](#example-sessions) to see how this should affect the requests you send. If you encounter an HTTP 406 status code, or a "Not Acceptable" error message without any further details, please check you have included this header in your request.
+
 ### Pagination
 
 The response to a **GET** request to a list of resources is paginated. By default the resulting XML contains at all the resources if there are less than 100 and truncated the results to 100 if there are more.
