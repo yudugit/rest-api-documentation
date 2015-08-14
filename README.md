@@ -30,6 +30,7 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
 - [Technical Details](#technical-details)
   - [Request Authentication](#request-authentication)
   - [Exceptions](#exceptions)
+  - [Request Media Types](#a-word-about-request-media-types)
   - [Pagination](#pagination)
   - [Dates](#dates)
   - [Booleans](#booleans)
