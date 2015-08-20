@@ -30,6 +30,7 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
 - [Technical Details](#technical-details)
   - [Request Authentication](#request-authentication)
   - [Exceptions](#exceptions)
+  - [Request Media Types](#a-word-about-request-media-types)
   - [Pagination](#pagination)
   - [Dates](#dates)
   - [Booleans](#booleans)
@@ -77,13 +78,19 @@ This service is arranged into **resources**, such as readers and their permissio
 
 All code samples can be found the [examples](examples) directory and each is accompanied by a README.md file which contains the documentation.
 
+Please note that these examples generally do not represent best practices for implementing clients of the API. For example, as noted below, rather than using the URIs as described, you are encouraged to make use of the hypermedia present in the resources to navigate the API, decoupling your implementation from ours. Unless otherwise stated, these examples should be treated as proof-of-concepts only, and not as applications ready for production use.
+
 #### [PHP Client](examples/phpClient)
 
-A sample PHP application that shows the use of the API. Note that this code is not ready for production use, and serves as an example only. It is not extensively tested and does not handle every possible error case in a suitable manner for production use. In addition, it does not represent best practices for implementing a client of the API. For example, as noted below, rather than using the URIs as described, you are encouraged to make use of the hypermedia present in the resources to navigate the API, decoupling your implementation from ours.
+A sample PHP application that shows the use of the API. In particular, this example is not extensively tested and does not handle every possible error case in a suitable manner for production use.
 
 #### [Java Client](examples/javaClient)
 
-A sample GUI java application that can be used to build and send requests to our service. Note that as for the PHP client, this code is not reader for production use and serves as an example only. 
+A sample GUI java application that can be used to build and send requests to our service.
+
+#### [.NET Client](examples/dotNetClient)
+
+A sample .NET console application that demonstrates how to build and send requests to our service.
 
 #### [Ruby Command Line Tool](examples/rubyCommandLineTool)
 
@@ -943,6 +950,10 @@ In addition to standard HTTP status codes the service returns a descriptive code
 - **UNKNOWN_ERROR** - An unknown error occurred.
 - **CLIENT_ERROR** - A bad request has been sent by the client.
 - **SERVER_ERROR** - An unknown internal error occurred.
+
+### A Word About Request Media Types
+
+The media type of all communications with the server should be of the form `application/vnd.yudu+xml`. Thus this type should always be included in an appropriate `Accept` header, and when necessary, specified as the type of any POST data. Please see the [Example Sessions](#example-sessions) to see how this should affect the requests you send. If you encounter an HTTP 406 status code, or a "Not Acceptable" error message without any further details, please check you have included this header in your request.
 
 ### Pagination
 

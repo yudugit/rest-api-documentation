@@ -8,10 +8,11 @@ namespace DotNetYuduAPIExample
 {
     internal class Program
     {
-        //Please contact Yudu if you don't already have these keys.
+        // Please contact Yudu if you don't already have these keys.
         private const string SecretKey = "(Shared secret goes here)";
         private const string ApiKey = "(API key goes here)";
         private const string Domain = "https://api.yudu.com";
+        private const string ServicePathRoot = "/Yudu/services/2.0";
         private const string PostXml =
 @"<reader xmlns=""http://schema.yudu.com"">
 	<username>example</username>
@@ -25,8 +26,42 @@ namespace DotNetYuduAPIExample
 
         private static void Main()
         {
-            var postPath = GetReaderPath();
-            var postUri = Domain + postPath;
+            var fullPath = GetReaderPath();
+            var fullUri = Domain + fullPath;
+
+            // Change this to false to try a POST request instead of a GET request
+            var doGetNotPost = true;
+
+            if (doGetNotPost)
+            {
+                var request = TryGetRequest(fullPath);
+            }
+            else // do POST not GET
+            {
+                var request = TryPostRequest(fullPath);
+            }
+
+            var client = new RestClient(fullUri);
+            var response = client.Execute(request);
+
+            // Print out status code and response body
+            Console.WriteLine(response.StatusCode);
+            Console.WriteLine(response.Content);
+        }
+
+        private static IRestRequest TryGetRequest(string getPath)
+        {
+            var stringToSign = string.Format("GET{0}", getPath);
+            var signature = Signature(stringToSign);
+            var request = new RestRequest(Method.GET)
+                    .AddHeader("Authentication", ApiKey)
+                    .AddHeader("Signature", signature)
+                    .AddHeader("Accept", "application/vnd.yudu+xml");
+            return request;
+        }
+
+        private static IRestRequest TryPostRequest(string postPath)
+        {
             var stringToSign = string.Format("POST{0}{1}", postPath, PostXml);
             var signature = Signature(stringToSign);
             var postBody = Encoding.UTF8.GetBytes(PostXml);
@@ -34,18 +69,12 @@ namespace DotNetYuduAPIExample
                 .AddHeader("Authentication", ApiKey)
                 .AddHeader("Signature", signature)
                 .AddParameter("application/vnd.yudu+xml", postBody, ParameterType.RequestBody);
-
-            var client = new RestClient(postUri);
-            var response = client.Execute(request);
-
-            //Print out status code and response body
-            Console.WriteLine(response.StatusCode);
-            Console.WriteLine(response.Content);
+            return request;
         }
 
         private static string GetReaderPath()
         {
-            return string.Format("/Yudu/services/2.0/readers?timestamp={0}", GetCurrentUnixTimestamp());
+            return string.Format("{0}/readers?timestamp={1}", ServicePathRoot, GetCurrentUnixTimestamp());
         }
 
         private static string GetCurrentUnixTimestamp()
