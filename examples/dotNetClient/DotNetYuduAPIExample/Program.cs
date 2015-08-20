@@ -28,12 +28,18 @@ namespace DotNetYuduAPIExample
         {
             var fullPath = GetReaderPath();
             var fullUri = Domain + fullPath;
-            
-            // Uncomment the next line to try a GET request
-            var request = TryGetRequest(fullPath);
 
-            // Uncomment the next line to try a POST request
-            //var request = TryPostRequest(fullPath);
+            // Change this to false to try a POST request instead of a GET request
+            var doGetNotPost = true;
+
+            if (doGetNotPost)
+            {
+                var request = TryGetRequest(fullPath);
+            }
+            else // do POST not GET
+            {
+                var request = TryPostRequest(fullPath);
+            }
 
             var client = new RestClient(fullUri);
             var response = client.Execute(request);
