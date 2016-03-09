@@ -27,6 +27,7 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
   - [Reader Login](#reader-login)
   - [Authorised Device](#authorised-device)
   - [Authentication](#authentication)
+  - [Web Edition SSO Tokens](#web-edition-sso-tokens)
 - [Technical Details](#technical-details)
   - [Request Authentication](#request-authentication)
   - [Exceptions](#exceptions)
@@ -67,7 +68,8 @@ The following terminology is used in this document:
 - **Publication** - A Yudu publication (also known as a "group")
 - **Subscription** - A Yudu subscription
 - **Subscription period** - Refers to the granting of access to a subscription for a time period
-- **Authorised device** - A single device which has been used by a reader to access an edition.
+- **Authorised device** - A single device which has been used by a reader to access an edition
+- **Web Edition SSO token** - A Single Sign-On (SSO) token valid for authentication for some set of (Web) Editions
 - **Node** - The Yudu Publisher system is arranged into a hierarchy of nodes. For most users you won't need to worry about the node ID of your Readers, however if you would like to place them at different levels within your part of the hierarchy you can by specifying it.
 
 ### Overview
@@ -349,7 +351,7 @@ Editions can be sorted by the following fields (see [Pagination](#pagination) fo
 - `name`
 - `publishedDate`
 
-#### Edition List
+#### <a name="editions-edition-list"></a>Edition List
 
 | URI          | Relation                          | Verbs   |
 | ------------ | --------------------------------- | ------- |
@@ -848,6 +850,86 @@ The authentication resource allows a user to authenticate a given reader's passw
 ##### PUT
 
 A **PUT** request authenticates a reader.. The request body must contain the XML representation of an authentication with the required fields as detailed in [Permissible Fields](#authentication-permissible-fields).
+
+### Web Edition SSO Tokens
+
+The token resource allows a third party to generate a short-lifetime SSO token that can be passed to a Web Edition for user authentication without a login dialog. Note that multiple tiers of authorisation are available, meaning this resource is additionally available as a sub-resource of other resources. It requires a unique User ID for whom to generate the token.
+
+#### XML Representation
+
+##### Authentication Token
+
+``` xml
+<authToken xmlns="http://schema.yudu.com">
+    <key>uniqueUserIdentification</key>
+    <tokenValue>0123456789abcdefghijklmnopqrstu</tokenValue>
+    <validity>Single edition</validity>
+</authToken>
+```
+
+##### <a name="token-permissible-fields"></a>Permissible Fields
+
+| Element / Attribute     | POST      |
+| ----------------------- | --------- |
+| `key`                   | Required  |
+| `tokenValue`            | Forbidden |
+| `validity`              | Forbidden |
+
+#### All Available Editions Token
+
+| URI        | Relation                       | Verbs    |
+| ---------- | ------------------------------ | -------- |
+| `/token/`  | `http://schema.yudu.com/token` | **POST** |
+
+##### POST
+
+A **POST** request creates an authentication token for the specified User ID. The request body must contain the XML representation of an authentication with the required fields as detailed in [Permissible Fields](#token-permissible-fields). The response body will contain the generated token value, as well as a human-readable description of the authorisation level granted for the token.
+
+This URI will generate tokens that will authenticate for any edition available in your [Edition List](#editions-edition-list).
+
+#### Single Publication Token
+
+| URI                                     | Relation                       | Verbs    |
+| --------------------------------------- | ------------------------------ | -------- |
+| `/publications/{publicationID}/token/`  | `http://schema.yudu.com/token` | **POST** |
+
+##### POST
+
+A **POST** request creates an authentication token for the specified User ID. The request body must contain the XML representation of an authentication with the required fields as detailed in [Permissible Fields](#token-permissible-fields). The response body will contain the generated token value, as well as a human-readable description of the authorisation level granted for the token.
+
+This URI will generate tokens that will authenticate for all editions under the Publication specified in the URI. Note that the `publicationID` is not optional, and an invalid ID may not show any indication of errors until it is used.
+
+#### Single Edition Token
+
+| URI                             | Relation                       | Verbs    |
+| ------------------------------- | ------------------------------ | -------- |
+| `/editions/{editionID}/token/`  | `http://schema.yudu.com/token` | **POST** |
+
+##### POST
+
+A **POST** request creates an authentication token for the specified User ID. The request body must contain the XML representation of an authentication with the required fields as detailed in [Permissible Fields](#token-permissible-fields). The response body will contain the generated token value, as well as a human-readable description of the authorisation level granted for the token.
+
+This URI will generate tokens that will only authenticate for the Edition specified in the URI. Note that the `editionID` is not optional, and an invalid ID may not show any indication of errors until it is used.
+
+#### Using a Token
+
+Given a User ID, the token resources generate a token value that, when used in combination with the ID, will authenticate a reader.
+Currently, these token values can only be passed directly to an edition by means of the edition's URL.
+By inserting both the ID and the token value into the URL as query parameters, the edition can be authenticated without requiring interaction by the reader.
+
+Note that since these tokens have a limited lifetime, if a user does attempt to reuse a URL with a token after the token has expired, they may be presented with a login screen as other users would be.
+If the intention is to provide users with a seamless experience, then fresh URLs may need to be generated for them frequently, and they should be alerted to the limited lifetime of the URLs thus generated.
+
+##### Token URL Query Parameters
+
+To successfully authenticate an edition using the token details, the following query parameters should be specified:
+
+| Query Parameter Name | Token Parameter Name | Description                                                    |
+| -------------------- | -------------------- | -------------------------------------------------------------- |
+| `yuduAuthId`         | `key`                | The unique User ID for whom the token was generated            |
+| `yuduAuthToken`      | `tokenValue`         | The generated value of the token returned in the response body |
+
+For example, if your edition URL is `http://hosted.edition.domain/path/to/edition/index.html` then the token above could be used by directing the user to the destination `http://hosted.edition.domain/path/to/edition/index.html?yuduAuthId=uniqueUserIdentification&yuduAuthToken=0123456789abcdefghijklmnopqrstu`.
 
 ## Technical Details
 
