@@ -936,6 +936,15 @@ To successfully authenticate an edition using the token details, the following q
 | `yuduAuthToken`      | `tokenValue`         | The generated value of the token returned in the response body |
 
 For example, if your edition URL is `http://hosted.edition.domain/path/to/edition/index.html` then the token above could be used by directing the user to the destination `http://hosted.edition.domain/path/to/edition/index.html?yuduAuthId=uniqueUserIdentification&yuduAuthToken=0123456789abcdefghijklmnopqrstu`.
+A simple use-case could be as follows:
+
+1. A reader clicks on a link on your webpage indicating they wish to view an edition.
+2. Your server reacts to that request by:
+    1. sending a request to this API for a token for that user
+    2. retrieving the token value from the response
+    3. inserting the token value and user ID into the edition's target URL
+    4. returning a 303 redirect with the modified edition URI as the target
+3. The reader's browser redirects to the edition and the edition uses the token to authenticate.
 
 ## Technical Details
 
