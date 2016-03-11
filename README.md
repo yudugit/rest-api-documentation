@@ -897,7 +897,7 @@ This URI will generate tokens that will authenticate for any edition available i
 
 A **POST** request creates an authentication token for the specified User ID. The request body must contain the XML representation of an authentication with the required fields as detailed in [Permissible Fields](#token-permissible-fields). The response body will contain the generated token value, as well as a human-readable description of the authorisation level granted for the token.
 
-This URI will generate tokens that will authenticate for all editions under the Publication specified in the URI. Note that the `publicationID` is not optional, and an invalid ID may not show any indication of errors until it is used.
+This URI will generate tokens that will authenticate for all editions under the Publication specified in the URI.
 
 #### Single Edition Token
 
@@ -909,7 +909,7 @@ This URI will generate tokens that will authenticate for all editions under the 
 
 A **POST** request creates an authentication token for the specified User ID. The request body must contain the XML representation of an authentication with the required fields as detailed in [Permissible Fields](#token-permissible-fields). The response body will contain the generated token value, as well as a human-readable description of the authorisation level granted for the token.
 
-This URI will generate tokens that will only authenticate for the Edition specified in the URI. Note that the `editionID` is not optional, and an invalid ID may not show any indication of errors until it is used.
+This URI will generate tokens that will only authenticate for the Edition specified in the URI.
 
 #### Using a Token
 
