@@ -284,6 +284,7 @@ A **GET** request returns the XML representation of a list of readers, optionall
 | **username** | String | Filter by username *prefix* |
 | **firstName** | String | Filter by given name *prefix* |
 | **lastName** | String | Filter by family name *prefix* |
+| **nodeId** | Integer | Return only readers created at the given node ID |
 | **subscription** | Integer | Return only readers subscribed to the subscription with the given ID |
 
 ##### POST
