@@ -325,6 +325,11 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 <edition xmlns="http://schema.yudu.com" id="1234">
   <name>My Edition</name>
   <publishedDate>2014-01-01T00:00:00Z</publishedDate>
+  <flashLiveUrl>http://hosted.edition.domain/pathToEditionFlashUrl</flashLiveUrl>
+  <webLiveUrl>http://hosted.edition.domain/pathToEditionWebUrl</webLiveUrl>
+  <htmlLiveUrl>http://hosted.edition.domain/pathToEditionHtmlUrl</htmlLiveUrl>
+  <onDeviceName>My Edition</onDeviceName>
+  <image_url>http://hosted.image.domain/pathToThumbnailUrl</image_url>
   <links>
     ⋮ // some link elements
   </links>
