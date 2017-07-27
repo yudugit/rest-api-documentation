@@ -43,6 +43,8 @@ public class UserInterface {
     private JTextArea responseCodeTextArea;
     private JLabel responseHeadersLabel;
     private JTextArea responseHeadersTextArea;
+    private JLabel responseTimeLabel;
+    private JTextArea responseTimeTextArea;
     private JLabel responseBodyLabel;
     private JTextArea responseBodyTextArea;
     private JScrollPane responseBodyScrollPane;
@@ -87,6 +89,10 @@ public class UserInterface {
         responseHeadersTextArea.setText(responseBody);
     }
 
+    public void updateResponseTime(String responseBody) {
+        responseTimeTextArea.setText(responseBody);
+    }
+
     public void updateResponseBody(String responseBody) {
         responseBodyTextArea.setText(responseBody);
     }
@@ -110,6 +116,7 @@ public class UserInterface {
         createRequestHeadersField();
         createResponseCodeField();
         createResponseHeadersField();
+        createResponseTimeField();
         createResponseBodyField();
 
         setLayout();
@@ -225,6 +232,13 @@ public class UserInterface {
         responseHeadersTextArea.setEditable(false);
     }
 
+    private void createResponseTimeField()
+    {
+        responseTimeLabel = new JLabel("Response Time");
+        responseTimeTextArea = new JTextArea(1, 60);
+        responseTimeTextArea.setEditable(false);
+    }
+
     private void createResponseBodyField()
     {
         responseBodyLabel = new JLabel("Response Body");
@@ -255,6 +269,7 @@ public class UserInterface {
                 .addGroup(sequence(requestHeadersLabel, requestHeadersTextArea))
                 .addGroup(sequence(responseCodeLabel, responseCodeTextArea))
                 .addGroup(sequence(responseHeadersLabel, responseHeadersTextArea))
+                .addGroup(sequence(responseTimeLabel, responseTimeTextArea))
                 .addGroup(sequence(responseBodyLabel, responseBodyScrollPane)));
         layout.setVerticalGroup(layout.createSequentialGroup()
                 .addGroup(parallelBaseline(apiKeyLabel, apiKeyTextField))
@@ -272,6 +287,7 @@ public class UserInterface {
                 .addGroup(parallelBaseline(requestHeadersLabel, requestHeadersTextArea))
                 .addGroup(parallelBaseline(responseCodeLabel, responseCodeTextArea))
                 .addGroup(parallelBaseline(responseHeadersLabel, responseHeadersTextArea))
+                .addGroup(parallelBaseline(responseTimeLabel, responseTimeTextArea))
                 .addGroup(parallelBaseline(responseBodyLabel, responseBodyScrollPane)));
     }
 
