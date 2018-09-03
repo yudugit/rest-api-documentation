@@ -28,6 +28,7 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
   - [Authorised Device](#authorised-device)
   - [Authentication](#authentication)
   - [Web Edition SSO Tokens](#web-edition-sso-tokens)
+  - [Targeted Notifications](#targeted-notifications)
 - [Technical Details](#technical-details)
   - [Request Authentication](#request-authentication)
   - [Exceptions](#exceptions)
@@ -78,7 +79,7 @@ This service is arranged into **resources**, such as readers and their permissio
 
 ### Sample code
 
-All code samples can be found the [examples](examples) directory and each is accompanied by a README.md file which contains the documentation.
+All code samples can be found in the [examples](examples) directory and each is accompanied by a README.md file which contains the documentation.
 
 Please note that these examples generally do not represent best practices for implementing clients of the API. For example, as noted below, rather than using the URIs as described, you are encouraged to make use of the hypermedia present in the resources to navigate the API, decoupling your implementation from ours. Unless otherwise stated, these examples should be treated as proof-of-concepts only, and not as applications ready for production use.
 
@@ -160,6 +161,7 @@ The following table summarises all the available resource URIs, and the effect o
 | [/subscriptionPeriods/{id}](#subscription-period)    | Gets the details of a single subscription period    | Creates a new subscription period     | Updates a subscription period     | Removes an existing subscription period     |
 | [/readers/{id}/authorisedDevices](#authorised-device) | N/A                                                 | N/A                                   | N/A                               | Removes all authorised devices for a reader |
 | [/readers/{id}/authentication](#authentication)       | N/A                                                 | N/A                                   | Authenticates a reader's password | N/A                                         |
+| [/targetedNotifications](#targeted-notifications)     | N/A                                                 | Sends a targeted notification         | N/A                               | N/A                                         |
 
 ## Resources
 
@@ -946,6 +948,97 @@ A simple use-case could be as follows:
     3. inserting the token value and user ID into the edition's target URL
     4. returning a 303 redirect with the modified edition URI as the target
 3. The reader's browser redirects to the edition and the edition uses the token to authenticate.
+
+### Targeted Notifications
+A targeted notification represents a notification to be sent to a specified list of Yudu subscribers and/or third-party subscribers, via Firebase and APNS.
+
+The targeted notification resource is different to other resources within the REST API, in that it doesn't represent an object of some kind, and therefore cannot be specified by an `id`. In addition to this, it never contains `link` elements defining relations of the resource and there are no pagination options necessary.
+
+In addition to the "REST API" account permission, the "Send Custom Notifications" permission is also required for sending targeted notifications.
+
+#### XML Representation
+The targeted notification resource is represented in XML with a `targetedNotification` root element.
+``` xml
+<targetedNotification xmlns="http://schema.yudu.com">
+    <nodeId>1234</nodeId>
+    <message>Notification body</message>
+    <title>Notification title</title>
+    <subscribers>
+        <thirdPartySubscriberToken>abcdef</thirdPartySubscriberToken>
+        <subscriberUsername>abcdef</subscriberUsername>
+    </subscribers>
+</targetedNotification>
+```
+
+#### Permissible Fields
+| Element       | Description                                         | Type                            | POST      |
+| ------------- | --------------------------------------------------- | ------------------------------- | --------- |
+| `nodeId`      | Publication node ID                                 | Integer                         | Required  |
+| `message`     | The body of the notification                        | String                          | Required  |
+| `title`       | The title of the notification                       | String                          | Allowed   |
+| `subscribers` | The list of subscribers to send the notification to | Subscriber elements (see below) |  Required |
+
+The `subscribers` element can contain multiple third party subscribers and/or Yudu subscribers, but must contain at minimum one of either.
+
+| Subscriber Element          | Description                       | Type   |
+| --------------------------- | --------------------------------- | ------ |
+| `thirdPartySubscriberToken` | Third party subscriber identifier | String |
+| `subscriberUsername`        | Yudu subscriber username          | String |
+
+
+#### Supported Verbs
+| URI                      | Relation                                      | Verbs |
+| ------------------------ | --------------------------------------------- | ----- |
+| `/targetedNotifications` | `http://schema.yudu.com/targetedNotification` | POST  |
+
+A **POST** request sends a targeted notification to the specified list of subscribers, and returns an XML representation of the response.
+
+#### Targeted Notification Response
+A targeted notification response will be returned as an XML representation, providing information about the success of iOS push notifications and Firebase cloud messages, and reasons for failures.
+
+##### XML Failure Response
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<targetedNotificationResponse xmlns="http://schema.yudu.com">
+    <firebaseResponse>
+        <allSucceeded>false</allSucceeded>
+        <responseMessage>
+            Firebase certificate details are missing for this node.
+            Please ensure the Firebase private key has been uploaded and selected,
+            and the project ID supplied on the "editPublication.htm" page.
+        </responseMessage>
+    </firebaseResponse>
+    <iOSResponse>
+        <allSucceeded>false</allSucceeded>
+        <responseMessage>
+            Push notification certificate details are missing for this node.
+            Please ensure the APNS security certificate has been uploaded and selected,
+            and the password supplied on the "editPublication.htm" page.
+        </responseMessage>
+    </iOSResponse>
+</targetedNotificationResponse>
+```
+
+##### XML Success Response
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<targetedNotificationResponse xmlns="http://schema.yudu.com">
+    <firebaseResponse>
+        <allSucceeded>true</allSucceeded>
+        <responseMessage>
+            Successfully completed sending Firebase messages.
+            There were 1 messages to send, and 1 sent successfully.
+        </responseMessage>
+    </firebaseResponse>
+    <iOSResponse>
+        <allSucceeded>false</allSucceeded>
+        <responseMessage>
+            Completed sending iOS push notifications.
+            There were 1 messages to send, and 1 sent successfully.
+        </responseMessage>
+    </iOSResponse>
+</targetedNotificationResponse>
+```
 
 ## Technical Details
 
