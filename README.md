@@ -1031,7 +1031,7 @@ A targeted notification response will be returned as an XML representation, prov
         </responseMessage>
     </firebaseResponse>
     <iOSResponse>
-        <allSucceeded>false</allSucceeded>
+        <allSucceeded>true</allSucceeded>
         <responseMessage>
             Completed sending iOS push notifications.
             There were 1 messages to send, and 1 sent successfully.
