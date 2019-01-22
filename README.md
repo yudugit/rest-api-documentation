@@ -968,6 +968,7 @@ The targeted notification resource is represented in XML with a `targetedNotific
     <nodeId>1234</nodeId>
     <message>Notification body</message>
     <title>Notification title</title>
+    <notificationPriority>DEFAULT</notificationPriority>
     <subscribers>
         <thirdPartySubscriberToken>abcdef</thirdPartySubscriberToken>
         <subscriberUsername>abcdef</subscriberUsername>
@@ -976,13 +977,23 @@ The targeted notification resource is represented in XML with a `targetedNotific
 ```
 
 #### Permissible Fields
-| Element       | Description                                         | Type                            | POST      |
-| ------------- | --------------------------------------------------- | ------------------------------- | --------- |
-| `nodeId`      | Publication node ID                                 | Integer                         | Required  |
-| `message`     | The body of the notification                        | String                          | Required  |
-| `title`       | The title of the notification                       | String                          | Allowed   |
-| `subscribers` | The list of subscribers to send the notification to | Subscriber elements (see below) |  Required |
+| Element                | Description                                         | Type                                          | POST     |
+| ---------------------- | --------------------------------------------------- | --------------------------------------------- | -------- |
+| `nodeId`               | Publication node ID                                 | Integer                                       | Required |
+| `message`              | The body of the notification                        | String                                        | Required |
+| `title`                | The title of the notification                       | String                                        | Allowed  |
+| `notificationPriority` | The priority of the notification                    | [NotificationPriority](#notificationpriority) | Allowed  |
+| `subscribers`          | The list of subscribers to send the notification to | [Subscriber elements](#subscriber-elements)   | Required |
 
+##### NotificationPriority
+The `notificationPriority` enumeration represents the priority of the notification being sent. The permissible values are:
+
+* `DEFAULT`
+* `HIGH`
+
+Please note that high priority notifications must be enabled at the publication for this to take effect. If no priority is specified or high priority notifications are not enabled, a notification with default priority will be sent.
+
+##### Subscriber Elements
 The `subscribers` element can contain multiple third party subscribers and/or Yudu subscribers, but must contain at minimum one of either.
 
 | Subscriber Element          | Description                       | Type   |
