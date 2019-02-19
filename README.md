@@ -1003,7 +1003,7 @@ The `subscribers` element can contain multiple third party subscribers and/or Yu
 | `thirdPartySubscriberToken` | Third party subscriber identifier | String |
 | `subscriberUsername`        | Yudu subscriber username          | String |
 
-### Disable Sound
+##### Disable Sound
 The priorities in iOS are differentiated by the sounds which are used thus disabling the sound would make the priority selected redundant.
 
 #### Supported Verbs
