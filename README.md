@@ -29,6 +29,8 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
   - [Authentication](#authentication)
   - [Web Edition SSO Tokens](#web-edition-sso-tokens)
   - [Targeted Notifications](#targeted-notifications)
+  - [Categories](#Categories)
+  - [categoryEditions](#categoryEditions)
 - [Technical Details](#technical-details)
   - [Request Authentication](#request-authentication)
   - [Exceptions](#exceptions)
@@ -72,6 +74,8 @@ The following terminology is used in this document:
 - **Authorised device** - A single device which has been used by a reader to access an edition
 - **Web Edition SSO token** - A Single Sign-On (SSO) token valid for authentication for some set of (Web) Editions
 - **Node** - The Yudu Publisher system is arranged into a hierarchy of nodes. For most users you won't need to worry about the node ID of your Readers, however if you would like to place them at different levels within your part of the hierarchy you can by specifying it.
+- **Category** - A Yudu category
+- **categoryEdition** - Categories assign to an edition
 
 ### Overview
 
@@ -162,6 +166,9 @@ The following table summarises all the available resource URIs, and the effect o
 | [/readers/{id}/authorisedDevices](#authorised-device) | N/A                                                 | N/A                                   | N/A                               | Removes all authorised devices for a reader |
 | [/readers/{id}/authentication](#authentication)       | N/A                                                 | N/A                                   | Authenticates a reader's password | N/A                                         |
 | [/targetedNotifications](#targeted-notifications)     | N/A                                                 | Sends a targeted notification         | N/A                               | N/A                                         |
+| [/Categories/](#Categories)                           | Gets a list of categories                           | Creates a new category                | N/A                               | Removes categories at a specific publication node |
+| [/Categories/{code}](#Categories)                     | Gets a list of categories which match code          | N/A                                   | Updates category at a specific publication node | Removes category at a specific publication node |
+| [/categoryEditions/](#CategoryEditions)               | Gets a list of all category editions                | Create a new category edition         | N/A                               | Remove category editions at publication node level or edition  level |
 
 ## Resources
 
@@ -1055,6 +1062,165 @@ A targeted notification response will be returned as an XML representation, prov
     </iOSResponse>
 </targetedNotificationResponse>
 ```
+### Categories
+ The category corresponds to a "Category" in Yudu Publisher.
+
+#### XML Representation
+
+##### Single Category
+
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<category xmlns="http://schema.yudu.com" limit="100" offset="0" total="3" truncated="false">
+            <categoryTitle>Category Example</categoryTitle>
+            <code>CATEGORY_EXAMPLE</code>
+            <containsAll>true</containsAll>
+            <defaultCategory>false</defaultCategory>
+            <ordering>4</ordering>
+            <publicationNodeId>61</publicationNodeId>
+</category>
+```
+
+##### Category List
+
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<categories xmlns="http://schema.yudu.com" limit="100" offset="0" total="8" truncated="false">
+    <categoryList>
+        <category>
+			⋮ // some category elements
+        </category>
+    </categoryList>
+    <links/>
+</categories>
+```
+
+#### Category List
+
+| URI               | Relation                               | Verbs   |
+| ----------------- | -------------------------------------- | ------- |
+| `/categories/`    | `http://schema.yudu.com/categories`    | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a list of categories, optionally filtered using the following query string parameters, as well as the pagination parameters described in [Pagination](#pagination).
+
+| Filter | Type | Description |
+| ------ | ---- | ----------- |
+| **publicationNodeId** | Long | Returns only the categories of the publication node with the given ID |
+
+##### POST
+
+A **POST** request creates a new category. The request body must contain the XML representation of category with the required fields as detailed in [Permissible Fields](#categories-permissible-fields).
+
+A successful **POST** will result in a **201 CREATED** response with a `Location` header specifying the URI of the newly created resource and the response body will contain the XML representation of the resource (including the `id`).
+
+##### DELETE
+
+A **DELETE** request removes all categories from a publication, with publicationNodeId required as a query strings.
+
+#### <a name="categories-permissible-fields"></a>Permissible Fields
+
+| Element / Attribute     | PUT       | POST      |
+| ----------------------- | --------- | --------- |
+| `categoryTitle`         | Required  | Required  |
+| `code`                  | Required  | Required  |
+| `containsAll`           | Required  | Required  |
+| `defaultCategory`       | Required  | Required  |
+| `ordering`              | Required  | Required  |
+| `publicationNodeId`     | Required  | Required  |
+
+#### Single Category
+
+| URI                   | Relation                              | Verbs   |
+| --------------------- | ------------------------------------- | ------- |
+| `/categories/{code}`  | `http://schema.yudu.com/categories`   | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of the category.
+
+##### PUT
+
+A **PUT** request updates an existing category. The request body must contain the XML representation of a category with publicationNodeId required as a query strings.
+
+##### DELETE
+
+A **DELETE** request deletes an existing category.
+
+#### <a name="category-query-strings"></a>Query Strings
+
+| Element / Attribute     | PUT       | DELETE    |
+| ----------------------- | --------- | --------- |
+| `publicationNodeId`     | Required  | Required  |
+
+
+### categoryEditions
+
+#### XML Representation
+
+##### Single categoryEdition
+
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<categoryEdition xmlns="http://schema.yudu.com" limit="100" offset="0" total="2" truncated="false">
+            <code>CATEGORY_EXAMPLE</code>
+            <editionId>72</editionId>
+            <publicationNodeId>58</publicationNodeId>
+</categoryEdition>
+```
+
+##### categoryEdition List
+
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<categoryEditions xmlns="http://schema.yudu.com" limit="100" offset="0" total="2" truncated="false">
+    <categoryEditionList>
+        <categoryEdition>
+	       ⋮ // some category elements
+        </categoryEdition>
+    </categoryEditionList>
+    <links/>
+</categoryEditions>
+```
+
+#### categoryEdition List
+
+| URI               | Relation                               | Verbs   |
+| ----------------- | -------------------------------------- | ------- |
+| `/categoryEditions/` | `http://schema.yudu.com/categoryEditions` | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a list of categoryEditions, optionally filtered using the following query string parameters, as well as the pagination parameters described in [Pagination](#pagination).
+
+| Filter | Type | Description |
+| ------ | ---- | ----------- |
+| **publicationNodeId** | Long | Return only categoryEditions that belong to a publication |
+| **EditionId** | Long | Return only categoryEditions that belong to an edition |
+
+##### POST
+
+A **POST** request creates a new categoryEditions. The request body must contain the XML representation of categoryEditions with the required fields as detailed in [Permissible Fields](#categoryEditions-permissible-fields).
+
+##### DELETE
+
+A **DELETE** request removes authorised categoryEditions.  The following query string parameters must be used, delete all is not possible.
+
+| Filter | Type | Description |
+| ------ | ---- | ----------- |
+| **publicationNodeId** | Long | Remove categoryEditions at publication which matches the id, category code must be specified |
+| **EditionId** | Long | Remove categoryEditions at edition which matches the id, it's possible to delete all categories at an edition |
+| **code** | String | Remove categoryEditions that matches the category code, either editionId or publicationNodeId must be specified |
+
+
+#### <a name="categoryEdition-permissible-fields"></a>Permissible Fields
+
+| Element / Attribute     | PUT       | POST      |
+| ----------------------- | --------- | --------- |
+| `code`                  | Required  | Required  |
+| `editionId`             | Required  | Required  |
+| `publicationNodeId`     | Required  | Required  |
 
 ## Technical Details
 
