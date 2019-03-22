@@ -448,25 +448,25 @@ A **PUT** request updates an existing edition. The request body must contain the
 
 A TargetState specifies the publish state the edition will get to for each platform.
 
-Platforms are:
-web
-ios
+Platforms are:  
+web  
+ios  
 android
 
-Options are:
-PREVIEW
-LIVE
-UNPUBLISH
-UNPREVIEW
+Options are:  
+PREVIEW  
+LIVE  
+UNPUBLISH  
+UNPREVIEW  
 UNAVAILABLE
 
 ##### PageBillingType
 
 A PageBillingType needs to be specified when a publish request is sent. This decides how the pages published are billed.
 
-Options are:
-UNBILLED
-PLATFORM
+Options are:  
+UNBILLED  
+PLATFORM  
 UNIVERSAL
 
 Using the PLATFORM option will use the billing type specific to each platform being published.
