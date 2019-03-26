@@ -364,6 +364,9 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 
 | Element / Attribute           | PUT       | POST      |
 | ----------------------------- | --------- | --------- |
+| `name`                        | Required  | Allowed   |
+| `onDeviceName`                | Required  | Allowed   |
+| `shortName`                   | Required  | Allowed   |
 | `drmEnabled`                  | Required  | Allowed   |
 | `iosSaleOption`               | Required  | Allowed   |
 | `iTunesConnectId`             | Allowed   | Allowed   |
@@ -433,6 +436,9 @@ A **PUT** request updates an existing edition. The request body must contain the
 ##### XML Representation of an EditionState
 ``` xml
 <editionState>
+  <name>My Edition</name>
+  <onDeviceName>My Edition</onDeviceName>
+  <shortName>MyEdition</shortName>
   <targetState>
     <web>PREVIEW</web>
   </targetState>
