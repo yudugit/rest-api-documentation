@@ -403,10 +403,6 @@ Editions can be sorted by the following fields (see [Pagination](#pagination) fo
 
 A **GET** request returns the XML representation of a list of editions, optionally filtered using the following query string parameters, as well as the pagination parameters described in [Pagination](#pagination).
 
-##### POST
-
-A **POST** request creates a new edition. The request body must contain the XML representation of an EditionState with the required fields as detailed in [Permissible Fields](#edition-permissible-fields).
-
 | Filter | Type | Description |
 | ------ | ---- | ----------- |
 | **name** | String | Filter by edition name *prefix* |
@@ -418,6 +414,10 @@ A **POST** request creates a new edition. The request body must contain the XML 
 | **androidPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the android platform
 | **htmlPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the HTML5 platform |
 | **webPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the combined web platform |
+
+##### POST
+
+A **POST** request creates a new edition. The request body must contain the XML representation of an EditionState with the required fields as detailed in [Permissible Fields](#edition-permissible-fields).
 
 #### Single Edition
 
