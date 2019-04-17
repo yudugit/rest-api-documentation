@@ -364,9 +364,9 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 
 | Element / Attribute           | PUT       | POST      |
 | ----------------------------- | --------- | --------- |
-| `name`                        | Required  | Allowed   |
-| `onDeviceName`                | Required  | Allowed   |
-| `shortName`                   | Required  | Allowed   |
+| `name`                        | Required  | Required  |
+| `onDeviceName`                | Required  | Required  |
+| `shortName`                   | Required  | Required  |
 | `drmEnabled`                  | Required  | Allowed   |
 | `iosSaleOption`               | Required  | Allowed   |
 | `iTunesConnectId`             | Allowed   | Allowed   |
