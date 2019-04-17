@@ -969,6 +969,7 @@ The targeted notification resource is represented in XML with a `targetedNotific
     <message>Notification body</message>
     <title>Notification title</title>
     <notificationPriority>DEFAULT</notificationPriority>
+	<disableSound>false</disableSound>
     <subscribers>
         <thirdPartySubscriberToken>abcdef</thirdPartySubscriberToken>
         <subscriberUsername>abcdef</subscriberUsername>
@@ -983,6 +984,7 @@ The targeted notification resource is represented in XML with a `targetedNotific
 | `message`              | The body of the notification                        | String                                        | Required |
 | `title`                | The title of the notification                       | String                                        | Allowed  |
 | `notificationPriority` | The priority of the notification                    | [NotificationPriority](#notificationpriority) | Allowed  |
+| `disableSound`         | Disable the notification sound                      |  Boolean                                      | Allowed  |
 | `subscribers`          | The list of subscribers to send the notification to | [Subscriber elements](#subscriber-elements)   | Required |
 
 ##### NotificationPriority
@@ -1001,6 +1003,8 @@ The `subscribers` element can contain multiple third party subscribers and/or Yu
 | `thirdPartySubscriberToken` | Third party subscriber identifier | String |
 | `subscriberUsername`        | Yudu subscriber username          | String |
 
+##### Disable Sound
+The priorities in iOS are differentiated by the sounds which are used thus disabling the sound would make the priority selected redundant.
 
 #### Supported Verbs
 | URI                      | Relation                                      | Verbs |
