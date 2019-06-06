@@ -464,7 +464,11 @@ PREVIEW
 LIVE  
 UNPUBLISH  
 UNPREVIEW  
-UNAVAILABLE
+UNAVAILABLE  
+ZIP_LIVE  
+ZIP_UNPUBLISH
+
+To republish a web zip, it must be unpublished first.
 
 ##### PageBillingType
 
