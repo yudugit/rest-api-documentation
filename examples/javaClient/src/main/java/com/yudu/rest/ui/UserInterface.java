@@ -27,6 +27,7 @@ public class UserInterface {
     private JTextField queryStringTextField;
     private JLabel requestBodyLabel;
     private JTextArea requestBodyTextArea;
+    private JScrollPane requestBodyScrollPane;
     private JLabel httpMethodLabel;
     private JComboBox httpMethodComboBox;
     private JButton requestButton;
@@ -35,6 +36,7 @@ public class UserInterface {
     private JTextArea requestURITextArea;
     private JLabel stringToSignLabel;
     private JTextArea stringToSignTextArea;
+    private JScrollPane stringToSignScrollPane;
     private JLabel signatureLabel;
     private JTextArea signatureTextArea;
     private JLabel requestHeadersLabel;
@@ -183,6 +185,7 @@ public class UserInterface {
     private void createRequestBodyField() {
         requestBodyLabel = new JLabel("Request Body");
         requestBodyTextArea = new JTextArea(5, 60);
+        requestBodyScrollPane = new JScrollPane(requestBodyTextArea);
     }
 
     private void createRequestButton()
@@ -201,6 +204,7 @@ public class UserInterface {
     {
         stringToSignLabel = new JLabel("String To Sign");
         stringToSignTextArea = new JTextArea(1, 60);
+        stringToSignScrollPane = new JScrollPane(stringToSignTextArea);
         stringToSignTextArea.setEditable(false);
     }
 
@@ -261,10 +265,10 @@ public class UserInterface {
                 .addGroup(sequence(resourcePathLabel, resourcePathTextField))
                 .addGroup(sequence(queryStringLabel, queryStringTextField))
                 .addGroup(sequence(httpMethodLabel, httpMethodComboBox))
-                .addGroup(sequence(requestBodyLabel, requestBodyTextArea))
+                .addGroup(sequence(requestBodyLabel, requestBodyScrollPane))
                 .addComponent(requestButton)
                 .addGroup(sequence(requestURILabel, requestURITextArea))
-                .addGroup(sequence(stringToSignLabel, stringToSignTextArea))
+                .addGroup(sequence(stringToSignLabel, stringToSignScrollPane))
                 .addGroup(sequence(signatureLabel, signatureTextArea))
                 .addGroup(sequence(requestHeadersLabel, requestHeadersTextArea))
                 .addGroup(sequence(responseCodeLabel, responseCodeTextArea))
@@ -279,10 +283,10 @@ public class UserInterface {
                 .addGroup(parallelBaseline(resourcePathLabel, resourcePathTextField))
                 .addGroup(parallelBaseline(queryStringLabel, queryStringTextField))
                 .addGroup(parallelBaseline(httpMethodLabel, httpMethodComboBox))
-                .addGroup(parallelBaseline(requestBodyLabel, requestBodyTextArea))
+                .addGroup(parallelBaseline(requestBodyLabel, requestBodyScrollPane))
                 .addComponent(requestButton)
                 .addGroup(parallelBaseline(requestURILabel, requestURITextArea))
-                .addGroup(parallelBaseline(stringToSignLabel, stringToSignTextArea))
+                .addGroup(parallelBaseline(stringToSignLabel, stringToSignScrollPane))
                 .addGroup(parallelBaseline(signatureLabel, signatureTextArea))
                 .addGroup(parallelBaseline(requestHeadersLabel, requestHeadersTextArea))
                 .addGroup(parallelBaseline(responseCodeLabel, responseCodeTextArea))
