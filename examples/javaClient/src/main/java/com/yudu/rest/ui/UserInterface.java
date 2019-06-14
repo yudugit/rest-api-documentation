@@ -184,7 +184,7 @@ public class UserInterface {
 
     private void createRequestBodyField() {
         requestBodyLabel = new JLabel("Request Body");
-        requestBodyTextArea = new JTextArea(5, 60);
+        requestBodyTextArea = new JTextArea(15, 60);
         requestBodyScrollPane = new JScrollPane(requestBodyTextArea);
     }
 
@@ -203,7 +203,7 @@ public class UserInterface {
     private void createStringToSignField()
     {
         stringToSignLabel = new JLabel("String To Sign");
-        stringToSignTextArea = new JTextArea(1, 60);
+        stringToSignTextArea = new JTextArea(10, 60);
         stringToSignScrollPane = new JScrollPane(stringToSignTextArea);
         stringToSignTextArea.setEditable(false);
     }
