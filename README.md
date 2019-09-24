@@ -379,8 +379,8 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 | `gaReportNameInsteadOfNodeId` | Allowed   | Allowed   |
 | `documentUrl`                 | Allowed   | Required  |
 | `publicationNodeId`           | Forbidden | Required  |
-| `stagedDaysLimit`             | Allowed   | Allowed   |
-| `stagedViewsLimit`            | Allowed   | Allowed   |
+| `previewDaysLimit`             | Allowed   | Allowed   |
+| `previewViewsLimit`            | Allowed   | Allowed   |
 | `pageBillingType`             | Allowed   | Allowed   |
 | `targetState`                 | Required  | Allowed   |
 
