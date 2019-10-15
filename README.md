@@ -379,7 +379,7 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 <metaPublishingResult>
     <book_id>1234</book_id>
     <title>My Edition</title>
-    <published_url>http://hosted.edition.domain/callbackSuccess</published_url>
+    <published_url>http://hosted.edition.domain/Index.html</published_url>
     <page_count>3</page_count>
     <status>UPDATED</status>
     <TargetPublishState>
@@ -395,7 +395,7 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 <metaPublishingResult>
     <book_id>1234</book_id>
     <title>My Edition</title>
-    <published_url>http://hosted.edition.domain/callbackFailure</published_url>
+    <published_url>http://hosted.edition.domain/Index.html</published_url>
     <page_count>3</page_count>
     <status>FAILED</status>
     <TargetPublishState>
