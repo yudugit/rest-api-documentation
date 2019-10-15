@@ -373,7 +373,7 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 
 #### <a name="meta-publishing-result"></a>Meta Publishing Result
 
-##### Successful REST API Update
+##### Successful REST API Request
 
 ``` xml
 <metaPublishingResult>
@@ -399,7 +399,9 @@ The edition corresponds to an "Edition" in Yudu Publisher.
     <page_count>3</page_count>
     <status>FAILED</status>
     <TargetPublishState>
-    <Web>LIVE</Web>
+       <Web>LIVE</Web>
+       <Android>LIVE</Android>
+       <iOS>LIVE</iOS>
     </TargetPublishState>
     <Exception>ExceptionWhichCausedFailure</Exception>
 </metaPublishingResult>
