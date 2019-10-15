@@ -373,7 +373,7 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 
 #### <a name="meta-publishing-result"></a>Meta Publishing Result
 
-## Successful REST API Update
+##### Successful REST API Update
 
 ``` xml
 <metaPublishingResult>
@@ -390,7 +390,7 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 </metaPublishingResult>
 ```
 
-## Failed REST API Request
+##### Failed REST API Request
 ``` xml
 <metaPublishingResult>
     <book_id>1234</book_id>
