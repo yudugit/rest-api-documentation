@@ -370,6 +370,42 @@ The edition corresponds to an "Edition" in Yudu Publisher.
     <callbackFailure>http://hosted.edition.domain/callbackFailure</callbackFailure>
 </editionState>
 ```
+
+#### <a name="meta-publishing-result"></a>Meta Publishing Result
+
+## Successful REST API Update
+
+``` xml
+<metaPublishingResult>
+    <book_id>1234</book_id>
+    <title>My Edition</title>
+    <published_url>http://hosted.edition.domain/callbackSuccess</published_url>
+    <page_count>3</page_count>
+    <status>UPDATED</status>
+    <TargetPublishState>
+        <Web>UNPUBLISH</Web>
+        <Android>UNPUBLISH</Android>
+        <iOS>UNPUBLISH</iOS>
+    </TargetPublishState>
+</metaPublishingResult>
+```
+
+## Failed REST API Request
+``` xml
+<metaPublishingResult>
+    <book_id>1234</book_id>
+    <title>My Edition</title>
+    <published_url>http://hosted.edition.domain/callbackFailure</published_url>
+    <page_count>3</page_count>
+    <status>FAILED</status>
+    <TargetPublishState>
+    <Web>LIVE</Web>
+    </TargetPublishState>
+    <Exception>ExceptionWhichCausedFailure</Exception>
+</metaPublishingResult>
+```
+
+
 #### <a name="edition-state-fields"></a>Permissible Fields
 
 | Element / Attribute     | PUT       | POST      |
@@ -450,11 +486,15 @@ The permission corresponds to an "Edition Permission" in Yudu Publisher.
 ```
 
 ##### POST
-A **POST** request creates a new edition. the request body must contain an XML representation of an EditionState, the EditionState with the required fields as detailed in [Permissible Fields](#edition-state-fields), `callbackSuccess` allows us to define a url to message when the edition is created successfully, `callbackFailure` allows us to define a url to message encase of a failure.
+A **POST** request creates a new edition. the request body must contain an XML representation of an EditionState, the EditionState with the required fields as detailed in [Permissible Fields](#edition-state-fields),
+`callbackSuccess` allows us to define a url to message when the edition is created successfully, `callbackFailure` allows us to define a url to message encase of a failure, once the operation is completed,
+ a [Meta Publishing Result](#meta-publishing-result) is sent to the correct url depending on the outcome.
 
 ##### PUT
 
-A **PUT** request updates an existing edition. The request body must contain the XML representation of an EditionState with the required fields as detailed in [Permissible Fields](#edition-state-fields).
+A **PUT** request updates an existing edition. The request body must contain the XML representation of an EditionState with the required fields as detailed in [Permissible Fields](#edition-state-fields),
+`callbackSuccess` allows us to define a url to message when the edition is created successfully, `callbackFailure` allows us to define a url to message encase of a failure, once the operation is completed,
+ a [Meta Publishing Result](#meta-publishing-result) is sent to the correct url depending on the outcome.
 
 ##### DELETE
 
