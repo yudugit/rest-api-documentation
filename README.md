@@ -1101,14 +1101,15 @@ A Stored File represents a file which is associated with a node which is stored 
 
 #### Sortable Fields
 
-Reader logins can be sorted by the following fields (see [Pagination](#pagination) for details):
+Stored files can be sorted by the following fields (see [Pagination](#pagination) for details):
 
 - `id`
-- `reader`
-- `node`
+- 'filename'
+- `fileType`
+- `fileSize`
 - `loginDate`
-- `platform`
-- `emailAddress`
+- `supportedUsage`
+- 'nodeId'
 
 #### Stored File List
 
