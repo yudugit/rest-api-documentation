@@ -1096,7 +1096,7 @@ A Stored File represents a file which is associated with a node which is stored 
   <links>
     ⋮ // some link elements
   </links>
-</readerLogins>
+</storedFiles>
 ```
 
 #### Sortable Fields
