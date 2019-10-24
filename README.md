@@ -29,6 +29,7 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
   - [Authentication](#authentication)
   - [Web Edition SSO Tokens](#web-edition-sso-tokens)
   - [Targeted Notifications](#targeted-notifications)
+  - [StoredFiles](#stored-files)
 - [Technical Details](#technical-details)
   - [Request Authentication](#request-authentication)
   - [Exceptions](#exceptions)
@@ -72,6 +73,7 @@ The following terminology is used in this document:
 - **Authorised device** - A single device which has been used by a reader to access an edition
 - **Web Edition SSO token** - A Single Sign-On (SSO) token valid for authentication for some set of (Web) Editions
 - **Node** - The Yudu Publisher system is arranged into a hierarchy of nodes. For most users you won't need to worry about the node ID of your Readers, however if you would like to place them at different levels within your part of the hierarchy you can by specifying it.
+- **Stored file** - A file stored in AWS associated with a node
 
 ### Overview
 
@@ -162,6 +164,9 @@ The following table summarises all the available resource URIs, and the effect o
 | [/readers/{id}/authorisedDevices](#authorised-device) | N/A                                                 | N/A                                   | N/A                               | Removes all authorised devices for a reader |
 | [/readers/{id}/authentication](#authentication)       | N/A                                                 | N/A                                   | Authenticates a reader's password | N/A                                         |
 | [/targetedNotifications](#targeted-notifications)     | N/A                                                 | Sends a targeted notification         | N/A                               | N/A                                         |
+| [/{path:editions|publications}/{nodeId}/storedFiles](#stored-file)     | Returns a list of stored files associated with a node | N/A          | N/A                               | N/A                                         |
+| [/{path:editions|publications}/{nodeId}/storedFiles/{id}](#stored-file)     | Returns the details of a single stored file associated with a node | N/A          | N/A                               | N/A                                         |
+| [/{path:editions|publications}/{nodeId}/storedFiles/content/{id}](#stored-file)     | Returns base 64 byte array version of the content of a stored file | N/A          | N/A                               | N/A                                         |
 
 ## Resources
 
@@ -1059,6 +1064,94 @@ A targeted notification response will be returned as an XML representation, prov
     </iOSResponse>
 </targetedNotificationResponse>
 ```
+
+### Stored File
+
+A Stored File represents a file which is associated with a node which is stored in AWS.
+
+#### XML Representation
+
+##### Single Stored File
+
+``` xml
+<storedFile xmlns="http://schema.yudu.com" id="1234">
+  <fileName>video.mp4</fileName>
+  <fileType>MP4</fileType>
+  <fileSize>36259689</fileSize>
+  <supportedUsage>NOT_SPECIFIED</supportedUsage>
+  <nodeId>519</nodeId>
+  <links>
+    ⋮ // some link elements
+  </links>
+</subscription>
+```
+
+##### Stored File List
+
+``` xml
+<storedFiles xmlns="http://schema.yudu.com" limit="100" offset="0" total="9" truncated="false">
+  <storedFileList>
+    ⋮ // some storedFile elements
+  </storedFileList>
+  <links>
+    ⋮ // some link elements
+  </links>
+</storedFiles>
+```
+
+#### Sortable Fields
+
+Stored files can be sorted by the following fields (see [Pagination](#pagination) for details):
+
+- `id`
+- 'filename'
+- `fileType`
+- `fileSize`
+- `loginDate`
+- `supportedUsage`
+- 'nodeId'
+
+#### Stored File List
+
+| URI              | Relation                              | Verbs   |
+| ---------------- | ------------------------------------- | ------- |
+| `/publications/{nodeId}/storedFiles/` | `http://schema.yudu.com/publications/{nodeId}/storedFiles/` | **GET** |
+| `/editions/{nodeId}/storedFiles/` | `http://schema.yudu.com/editions/{nodeId}/storedFiles/` | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a list of stored files, optionally filtered using the following query string parameters, as well as the pagination parameters described in [Pagination](#pagination).
+
+| Filter | Type | Description |
+| ------ | ---- | ----------- |
+| **Id** | Integer | Return only stored files with the given ID |
+| **logicalFilename** | Integer | Return only stored files with the given logical file name |
+| **fileType** | String |  Return only stored files with the given file type |
+| **fileSize** | Long |   Return only stored files with the given file size |
+| **supportedUsage** | String | Return only stored files with the given supported usage |
+
+#### Single Stored File
+
+| URI                  | Relation                             | Verbs   |
+| -------------------- | ------------------------------------ | ------- |
+| `/publications/{nodeId}/storedFiles/{id}` | `http://schema.yudu.com/publications/{nodeId}/storedFiles/` | **GET** |
+| `/editions/{nodeId}/storedFiles/{id}` | `http://schema.yudu.com/editions/{nodeId}/storedFiles/` | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a stored file. Note that any fields which do not have a value may not be included in the XML representation.
+
+
+#### Single Stored File Content
+
+| URI                  | Relation                             | Verbs   |
+| -------------------- | ------------------------------------ | ------- |
+| `/publications/{nodeId}/storedFiles/content/{id}` | `http://schema.yudu.com/publications/{nodeId}/storedFiles/` | **GET** |
+| `/editions/{nodeId}/storedFiles/content/{id}` | `http://schema.yudu.com/editions/{nodeId}/storedFiles/` | **GET** |
+
+##### GET
+
+A **GET** request returns the a base 64 representation of the content of the stored file.
 
 ## Technical Details
 
