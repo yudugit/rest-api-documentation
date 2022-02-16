@@ -369,17 +369,17 @@ Editions can be sorted by the following fields (see [Pagination](#pagination) fo
 
 A **GET** request returns the XML representation of a list of editions, optionally filtered using the following query string parameters, as well as the pagination parameters described in [Pagination](#pagination).
 
-| Filter | Type | Description |
-| ------ | ---- | ----------- |
-| **name** | String | Filter by edition name *prefix* |
-| **subscription** | Integer | Return only editions shipped to the subscription with the given ID |
-| **publishedDate\_after** | [Date](#dates) |  Return only editions with an official publication date *after* the given date |
-| **publishedDate\_before** | [Date](#dates) | Return only editions with an official publication date *before* the given date |
-| **flashPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the flash platform |
-| **iOSPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the iOS platform |
-| **androidPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the android platform
-| **htmlPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the HTML5 platform |
-| **webPublished** | [Boolean](#booleans) | Return only editions which are published (or not published) on the combined web platform |
+| Filter                    | Type                 | Description                                                                              |
+|---------------------------|----------------------|------------------------------------------------------------------------------------------|
+| **name**                  | String               | Filter by edition name *prefix*                                                          |
+| **subscription**          | Integer              | Return only editions shipped to the subscription with the given ID                       |
+| **publishedDate\_after**  | [Date](#dates)       | Return only editions with an official publication date *after* the given date            |
+| **publishedDate\_before** | [Date](#dates)       | Return only editions with an official publication date *before* the given date           |
+| **flashPublished**        | [Boolean](#booleans) | Return only editions which are published (or not published) on the flash platform        |
+| **iOSPublished**          | [Boolean](#booleans) | Return only editions which are published (or not published) on the iOS platform          |
+| **androidPublished**      | [Boolean](#booleans) | Return only editions which are published (or not published) on the android platform      |
+| **htmlPublished**         | [Boolean](#booleans) | Return only editions which are published (or not published) on the HTML5 platform        |
+| **webPublished**          | [Boolean](#booleans) | Return only editions which are published (or not published) on the combined web platform |
 
 #### Single Edition
 
