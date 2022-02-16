@@ -29,6 +29,7 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
   - [Authentication](#authentication)
   - [Web Edition SSO Tokens](#web-edition-sso-tokens)
   - [Targeted Notifications](#targeted-notifications)
+  - [Stored File](#stored-file)
 - [Technical Details](#technical-details)
   - [Request Authentication](#request-authentication)
   - [Exceptions](#exceptions)
@@ -72,6 +73,7 @@ The following terminology is used in this document:
 - **Authorised device** - A single device which has been used by a reader to access an edition
 - **Web Edition SSO token** - A Single Sign-On (SSO) token valid for authentication for some set of (Web) Editions
 - **Node** - The Yudu Publisher system is arranged into a hierarchy of nodes. For most users you won't need to worry about the node ID of your Readers, however if you would like to place them at different levels within your part of the hierarchy you can by specifying it.
+- **Stored file** - A file stored in AWS S3, which is associated with a node
 
 ### Overview
 
@@ -1059,6 +1061,10 @@ A targeted notification response will be returned as an XML representation, prov
     </iOSResponse>
 </targetedNotificationResponse>
 ```
+
+### Stored File
+
+A stored file represents a file which is associated with a node and which is stored in AWS S3.
 
 ## Technical Details
 
