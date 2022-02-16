@@ -1066,6 +1066,35 @@ A targeted notification response will be returned as an XML representation, prov
 
 A stored file represents a file which is associated with a node and which is stored in AWS S3.
 
+#### XML Representation
+
+##### Single Supported File Usage
+
+``` xml
+<supportedFileUsage name="SOME_FILE_USAGE">
+    <fileTypes>
+        <fileType>.someExtension</fileType>
+        <fileType>.someOtherExtension</fileType>
+    </fileTypes>
+</supportedFileUsage>
+```
+
+**Note:** The file type list can consist of one or more elements.
+
+##### Supported File Usage List
+
+``` xml
+<storedFiles xmlns="http://schema.yudu.com">
+    <supportedFileUsageList>
+        // some supported file usage elements
+    </supportedFileUsageList>
+    <links>
+        <link rel="http://schema.yudu.com/storedFiles" name="storedFiles"
+              href="https://api.yudu.com/Yudu/services/2.0/nodes/<the_given_node>/storedFiles" type="application/vnd.yudu+xml"/>
+    </links>
+</storedFiles>
+```
+
 ## Technical Details
 
 ### Request Authentication
