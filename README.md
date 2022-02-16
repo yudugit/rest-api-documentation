@@ -1095,6 +1095,15 @@ A stored file represents a file which is associated with a node and which is sto
 </storedFiles>
 ```
 
+#### <a name="storedFile-permissibleFields"></a>Permissible Fields
+
+This section refers to the fields relevant to the main stored files requests, not the supported file usages request.
+
+| Element / Attribute  | PUT      |
+|----------------------|----------|
+| `file`               | Required |
+| `usage`              | Allowed  |
+
 #### <a name="storedFile-supportedFileUsageList"></a>Supported File Usage List
 
 | URI                                               | Relation                                     | Verbs   |
@@ -1104,6 +1113,48 @@ A stored file represents a file which is associated with a node and which is sto
 ##### GET
 
 A **GET** request returns the XML representation of a list of supported file usages.
+
+#### Stored File List
+
+| URI                           | Relation                             | Verbs   |
+|-------------------------------|--------------------------------------|---------|
+| `/nodes/{nodeId}/storedFiles` | `http://schema.yudu.com/storedFiles` | **PUT** |
+
+##### PUT
+
+A **PUT** request uploads a file at the specified node. It must be a multipart request with a `multipart/form-data` Content-Type. The body must contain the required field `file` as mentioned in [Permissible Fields](#storedFile-permissibleFields). If the `usage` field is missing, it defaults to `NOT_SPECIFIED`. A full list of file usages supported at a given node can be obtained via the [Supported File Usage List](#storedFile-supportedFileUsageList) request. If a file is uploaded with the same name and the same usage as an existing file, it replaces the original.
+
+A successful **PUT** will result in a **200 OK** response except for uploading a PDF file with a `NOT_SPECIFIED` usage which results in a **201 ACCEPTED** response, as the file is processed asynchronously.
+
+If a request fails, the response body will contain an XML representation of the error, including the `code`, `customError` (if relevant), and `detail` elements, as illustrated in the example below.
+
+```xml
+<error xmlns="http://schema.yudu.com">
+  <code>CLIENT_ERROR</code>
+  <customError>1001</customError>
+  <detail>This file is empty. Please upload a valid file.</detail>
+</error>
+```
+
+See the following table for more information about errors.
+
+| Response status code | Code         | Custom error | Description                                                         |
+|----------------------|--------------|--------------|---------------------------------------------------------------------|
+| 400                  | CLIENT_ERROR | 1001         | Empty file                                                          |
+| 400                  | CLIENT_ERROR | 1002         | Type of node does not support selected usage                        |
+| 400                  | CLIENT_ERROR | 1003         | Invalid file                                                        |
+| 400                  | CLIENT_ERROR | 1004         | Invalid mapping or table of contents file in HTML articles zip file |
+| 400                  | CLIENT_ERROR | 1005         | Invalid HTML articles mapping file                                  |
+| 400                  | CLIENT_ERROR | 1006         | Invalid HTML articles table of contents file                        |
+| 400                  | CLIENT_ERROR | 1007         | Invalid table of contents file                                      |
+| 400                  | CLIENT_ERROR | 1008         | Invalid smart catalog file                                          |
+| 400                  | CLIENT_ERROR | 1009         | Malformed smart catalog file                                        |
+| 400                  | CLIENT_ERROR | 1010         | Invalid read aloud timings file                                     |
+| 409                  | CLIENT_ERROR | 1011         | Temporary file exists                                               |
+| 400                  | CLIENT_ERROR | 1012         | A PDF file with the same name but a different usage already exists  |
+| 400                  | CLIENT_ERROR | 1013         | PDF file uploaded at non-edition node                               |
+| 400                  | CLIENT_ERROR | 1014         | Existing PDF file is too old to allow re-uploading                  |
+| 500                  | SERVER_ERROR |              | An internal server error has occured                                |
 
 ## Technical Details
 
