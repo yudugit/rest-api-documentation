@@ -1095,6 +1095,16 @@ A stored file represents a file which is associated with a node and which is sto
 </storedFiles>
 ```
 
+#### <a name="storedFile-supportedFileUsageList"></a>Supported File Usage List
+
+| URI                                               | Relation                                     | Verbs   |
+|---------------------------------------------------|----------------------------------------------|---------|
+| `/nodes/{nodeId}/storedFiles/supportedFileUsages` | `http://schema.yudu.com/supportedFileUsages` | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a list of supported file usages.
+
 ## Technical Details
 
 ### Request Authentication
