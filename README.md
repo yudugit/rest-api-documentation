@@ -1074,10 +1074,10 @@ A stored file represents a file which is associated with a node and which is sto
 
 ``` xml
 <supportedFileUsage name="SOME_FILE_USAGE">
-    <fileTypes>
+    <fileTypeList>
         <fileType>.someExtension</fileType>
         <fileType>.someOtherExtension</fileType>
-    </fileTypes>
+    </fileTypeList>
 </supportedFileUsage>
 ```
 
