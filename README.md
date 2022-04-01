@@ -29,6 +29,7 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
   - [Authentication](#authentication)
   - [Web Edition SSO Tokens](#web-edition-sso-tokens)
   - [Targeted Notifications](#targeted-notifications)
+  - [Stored File](#stored-file)
 - [Technical Details](#technical-details)
   - [Request Authentication](#request-authentication)
   - [Exceptions](#exceptions)
@@ -72,6 +73,7 @@ The following terminology is used in this document:
 - **Authorised device** - A single device which has been used by a reader to access an edition
 - **Web Edition SSO token** - A Single Sign-On (SSO) token valid for authentication for some set of (Web) Editions
 - **Node** - The Yudu Publisher system is arranged into a hierarchy of nodes. For most users you won't need to worry about the node ID of your Readers, however if you would like to place them at different levels within your part of the hierarchy you can by specifying it.
+- **Stored file** - A file stored in AWS S3, which is associated with a node
 
 ### Overview
 
@@ -142,26 +144,28 @@ In order to determine which verbs can be used to interact with a resource, it is
 
 The following table summarises all the available resource URIs, and the effect of each verb on them. Each of them is relative to the base URI for our API: `https://api.yudu.com/Yudu/services/2.0`.
 
-| Resource                                              | GET                                                 | POST                                  | PUT                               | DELETE                                      |
-| ----------------------------------------------------- | --------------------------------------------------- | ------------------------------------- | --------------------------------- | ------------------------------------------- |
-| [/](#service-description)                             | Returns a list of links to the other available URIs | N/A                                   | N/A                               | N/A                                         |
-| [/readers/](#reader)                                 | Returns a list of readers                           | Creates a new reader                  | N/A                               | N/A                                         |
-| [/readers/{id}](#reader)                             | Returns the details of a single reader              | N/A                                   | Updates a reader                  | Deletes a reader                            |
-| [/editions/](#edition)                               | Gets a list of all editions                         | N/A                                   | N/A                               | N/A                                         |
-| [/editions/{id}](#edition)                           | Gets the details of a single edition                | N/A                                   | N/A                               | N/A                                         |
-| [/permissions/](#permission)                         | Lists all edition permissions by readers            | Creates a new permission for a reader | N/A                               | N/A                                         |
-| [/permissions/{id}](#permission)                     | Gets the details of a single permission             | N/A                                   | Updates a permission              | Removes an existing permission              |
-| [/readerLogins/](#reader-login)                      | Gets a list of all reader logins                    | N/A                                   | N/A                               | N/A                                         |
-| [/readerLogins/{id}](#reader-login)                  | Gets the details of a single reader login           | N/A                                   | N/A                               | N/A                                         |
-| [/publications/](#publication)                       | Gets a list of all publications                     | N/A                                   | N/A                               | N/A                                         |
-| [/publications/{id}](#publication)                   | Gets the details of a single publication            | N/A                                   | N/A                               | N/A                                         |
-| [/subscriptions/](#subscription)                     | Gets a list of subscriptions                        | N/A                                   | N/A                               | N/A                                         |
-| [/subscriptions/{id}](#subscription)                 | Gets the details of a single subscription           | N/A                                   | N/A                               | N/A                                         |
-| [/subscriptionPeriods/](#subscription-period)        | Gets a list of subscription periods                 | N/A                                   | N/A                               | N/A                                         |
-| [/subscriptionPeriods/{id}](#subscription-period)    | Gets the details of a single subscription period    | Creates a new subscription period     | Updates a subscription period     | Removes an existing subscription period     |
-| [/readers/{id}/authorisedDevices](#authorised-device) | N/A                                                 | N/A                                   | N/A                               | Removes all authorised devices for a reader |
-| [/readers/{id}/authentication](#authentication)       | N/A                                                 | N/A                                   | Authenticates a reader's password | N/A                                         |
-| [/targetedNotifications](#targeted-notifications)     | N/A                                                 | Sends a targeted notification         | N/A                               | N/A                                         |
+| Resource                                                        | GET                                                                               | POST                                  | PUT                                    | DELETE                                      |
+|-----------------------------------------------------------------|-----------------------------------------------------------------------------------|---------------------------------------|----------------------------------------|---------------------------------------------|
+| [/](#service-description)                                       | Returns a list of links to the other available URIs                               | N/A                                   | N/A                                    | N/A                                         |
+| [/readers/](#reader)                                            | Returns a list of readers                                                         | Creates a new reader                  | N/A                                    | N/A                                         |
+| [/readers/{id}](#reader)                                        | Returns the details of a single reader                                            | N/A                                   | Updates a reader                       | Deletes a reader                            |
+| [/editions/](#edition)                                          | Gets a list of all editions                                                       | N/A                                   | N/A                                    | N/A                                         |
+| [/editions/{id}](#edition)                                      | Gets the details of a single edition                                              | N/A                                   | N/A                                    | N/A                                         |
+| [/permissions/](#permission)                                    | Lists all edition permissions by readers                                          | Creates a new permission for a reader | N/A                                    | N/A                                         |
+| [/permissions/{id}](#permission)                                | Gets the details of a single permission                                           | N/A                                   | Updates a permission                   | Removes an existing permission              |
+| [/readerLogins/](#reader-login)                                 | Gets a list of all reader logins                                                  | N/A                                   | N/A                                    | N/A                                         |
+| [/readerLogins/{id}](#reader-login)                             | Gets the details of a single reader login                                         | N/A                                   | N/A                                    | N/A                                         |
+| [/publications/](#publication)                                  | Gets a list of all publications                                                   | N/A                                   | N/A                                    | N/A                                         |
+| [/publications/{id}](#publication)                              | Gets the details of a single publication                                          | N/A                                   | N/A                                    | N/A                                         |
+| [/subscriptions/](#subscription)                                | Gets a list of subscriptions                                                      | N/A                                   | N/A                                    | N/A                                         |
+| [/subscriptions/{id}](#subscription)                            | Gets the details of a single subscription                                         | N/A                                   | N/A                                    | N/A                                         |
+| [/subscriptionPeriods/](#subscription-period)                   | Gets a list of subscription periods                                               | N/A                                   | N/A                                    | N/A                                         |
+| [/subscriptionPeriods/{id}](#subscription-period)               | Gets the details of a single subscription period                                  | Creates a new subscription period     | Updates a subscription period          | Removes an existing subscription period     |
+| [/readers/{id}/authorisedDevices](#authorised-device)           | N/A                                                                               | N/A                                   | N/A                                    | Removes all authorised devices for a reader |
+| [/readers/{id}/authentication](#authentication)                 | N/A                                                                               | N/A                                   | Authenticates a reader's password      | N/A                                         |
+| [/targetedNotifications](#targeted-notifications)               | N/A                                                                               | Sends a targeted notification         | N/A                                    | N/A                                         |
+| [/nodes/{nodeId}/storedFiles/supportedFileUsages](#stored-file) | Gets the file usages supported at the given node and the corresponding file types | N/A                                   | N/A                                    | N/A                                         | 
+| [/nodes/{nodeId}/storedFiles/](#stored-file)                    | N/A                                                                               | N/A                                   | (Re-)uploads a file with a given usage | N/A                                         |
 
 ## Resources
 
@@ -1059,6 +1063,100 @@ A targeted notification response will be returned as an XML representation, prov
     </iOSResponse>
 </targetedNotificationResponse>
 ```
+
+### Stored File
+
+A stored file represents a file which is associated with a node and which is stored in AWS S3.
+
+#### XML Representation
+
+##### Single Supported File Usage
+
+``` xml
+<supportedFileUsage name="SOME_FILE_USAGE">
+    <fileTypeList>
+        <fileType>.someExtension</fileType>
+        <fileType>.someOtherExtension</fileType>
+    </fileTypeList>
+</supportedFileUsage>
+```
+
+**Note:** The file type list can consist of one or more elements.
+
+##### Supported File Usage List
+
+``` xml
+<storedFiles xmlns="http://schema.yudu.com">
+    <supportedFileUsageList>
+        // some supported file usage elements
+    </supportedFileUsageList>
+    <links>
+        <link rel="http://schema.yudu.com/storedFiles" name="storedFiles"
+              href="https://api.yudu.com/Yudu/services/2.0/nodes/<the_given_node>/storedFiles" type="application/vnd.yudu+xml"/>
+    </links>
+</storedFiles>
+```
+
+#### <a name="storedFile-permissibleFields"></a>Permissible Fields
+
+This section refers to the fields relevant to the main stored files requests, not the supported file usages request.
+
+| Element / Attribute  | PUT      |
+|----------------------|----------|
+| `file`               | Required |
+| `usage`              | Allowed  |
+
+#### <a name="storedFile-supportedFileUsageList"></a>Supported File Usage List
+
+| URI                                               | Relation                                     | Verbs   |
+|---------------------------------------------------|----------------------------------------------|---------|
+| `/nodes/{nodeId}/storedFiles/supportedFileUsages` | `http://schema.yudu.com/supportedFileUsages` | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a list of supported file usages.
+
+#### Stored File List
+
+| URI                           | Relation                             | Verbs   |
+|-------------------------------|--------------------------------------|---------|
+| `/nodes/{nodeId}/storedFiles` | `http://schema.yudu.com/storedFiles` | **PUT** |
+
+##### PUT
+
+A **PUT** request uploads a file at the specified node. It must be a multipart request with a `multipart/form-data` Content-Type. The body must contain the required field `file` as mentioned in [Permissible Fields](#storedFile-permissibleFields). If the `usage` field is missing, it defaults to `NOT_SPECIFIED`. A full list of file usages supported at a given node can be obtained via the [Supported File Usage List](#storedFile-supportedFileUsageList) request. If a file is uploaded with the same name and the same usage as an existing file, it replaces the original.
+
+A successful **PUT** will result in a **200 OK** response except for uploading a PDF file with a `NOT_SPECIFIED` usage which results in a **201 ACCEPTED** response, as the file is processed asynchronously.
+
+If a request fails, the response body will contain an XML representation of the error, including the `code`, `customError` (if relevant), and `detail` elements, as illustrated in the example below.
+
+```xml
+<error xmlns="http://schema.yudu.com">
+  <code>CLIENT_ERROR</code>
+  <customError>1001</customError>
+  <detail>This file is empty. Please upload a valid file.</detail>
+</error>
+```
+
+See the following table for more information about errors.
+
+| Response status code | Code         | Custom error | Description                                                         |
+|----------------------|--------------|--------------|---------------------------------------------------------------------|
+| 400                  | CLIENT_ERROR | 1001         | Empty file                                                          |
+| 400                  | CLIENT_ERROR | 1002         | Type of node does not support selected usage                        |
+| 400                  | CLIENT_ERROR | 1003         | Invalid file                                                        |
+| 400                  | CLIENT_ERROR | 1004         | Invalid mapping or table of contents file in HTML articles zip file |
+| 400                  | CLIENT_ERROR | 1005         | Invalid HTML articles mapping file                                  |
+| 400                  | CLIENT_ERROR | 1006         | Invalid HTML articles table of contents file                        |
+| 400                  | CLIENT_ERROR | 1007         | Invalid table of contents file                                      |
+| 400                  | CLIENT_ERROR | 1008         | Invalid smart catalog file                                          |
+| 400                  | CLIENT_ERROR | 1009         | Malformed smart catalog file                                        |
+| 400                  | CLIENT_ERROR | 1010         | Invalid read aloud timings file                                     |
+| 409                  | CLIENT_ERROR | 1011         | Temporary file exists                                               |
+| 400                  | CLIENT_ERROR | 1012         | A PDF file with the same name but a different usage already exists  |
+| 400                  | CLIENT_ERROR | 1013         | PDF file uploaded at non-edition node                               |
+| 400                  | CLIENT_ERROR | 1014         | Existing PDF file is too old to allow re-uploading                  |
+| 500                  | SERVER_ERROR |              | An internal server error has occured                                |
 
 ## Technical Details
 
