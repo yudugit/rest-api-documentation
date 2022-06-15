@@ -413,17 +413,17 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 | Element / Attribute     | PUT       | POST      |
 | ----------------------- | --------- | --------- |
 | `documentUrl`           | Allowed   | Required  |
-| `publicationNodeId`     | Required  | Required  |
+| `publicationNodeId`     | Allowed   | Required  |
 | `targetState`           | Required  | Required  |
-| `pageBillingType`       | Required  | Required  |
-| `androidSaleOption`     | Required  | Allowed   |
-| `iosSaleOption`         | Required  | Allowed   |
-| `enablePrinting`        | Required  | Allowed   |
-| `enableSharingByEmail`  | Required  | Allowed   |
-| `drmEnabled`            | Required  | Allowed   |
-| `name`                  | Required  | Required  |
-| `shortName`             | Required  | Required  |
-| `onDeviceName`          | Required  | Required  |
+| `pageBillingType`       | Allowed   | Required  |
+| `androidSaleOption`     | Allowed   | Allowed   |
+| `iosSaleOption`         | Allowed   | Allowed   |
+| `enablePrinting`        | Allowed   | Allowed   |
+| `enableSharingByEmail`  | Allowed   | Allowed   |
+| `drmEnabled`            | Allowed   | Allowed   |
+| `name`                  | Allowed   | Required  |
+| `shortName`             | Allowed   | Required  |
+| `onDeviceName`          | Allowed   | Required  |
 | `callbackSuccess`       | Allowed   | Allowed   |
 | `callbackFailure`       | Allowed   | Allowed   |
 
