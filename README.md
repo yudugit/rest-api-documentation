@@ -974,6 +974,8 @@ The targeted notification resource is represented in XML with a `targetedNotific
     <title>Notification title</title>
     <notificationPriority>DEFAULT</notificationPriority>
 	<disableSound>false</disableSound>
+	<iDeviceDeepLink>myapp://mylink</iDeviceDeepLink>
+	<androidDeepLink>myapp://mylink</androidDeepLink>
     <subscribers>
         <thirdPartySubscriberToken>abcdef</thirdPartySubscriberToken>
         <subscriberUsername>abcdef</subscriberUsername>
@@ -989,6 +991,8 @@ The targeted notification resource is represented in XML with a `targetedNotific
 | `title`                | The title of the notification                       | String                                        | Allowed  |
 | `notificationPriority` | The priority of the notification                    | [NotificationPriority](#notificationpriority) | Allowed  |
 | `disableSound`         | Disable the notification sound                      |  Boolean                                      | Allowed  |
+| `iDeviceDeepLink`      | The deep link to be followed on iDevice apps        | String                                        | Allowed  |
+| `androidDeepLink`      | The deep link to be followed on Android apps        | String                                        | Allowed  |            
 | `subscribers`          | The list of subscribers to send the notification to | [Subscriber elements](#subscriber-elements)   | Required |
 
 ##### NotificationPriority
@@ -1009,6 +1013,13 @@ The `subscribers` element can contain multiple third party subscribers and/or Yu
 
 ##### Disable Sound
 The priorities in iOS are differentiated by the sounds which are used thus disabling the sound would make the priority selected redundant.
+
+##### Deep Links
+The deep links that are currently supported are:
+* `<appScheme>://pageLink/editionId/<editionId>/` - to navigate to the given edition
+* `<appScheme>://pageLink/editionId/<editionId>/pageNumber/<pageNumber>/` - to navigate to the given edition at the given page number
+* `<appScheme>://latest-edition/` - to navigate to the latest edition
+* `<appScheme>://<tabName>` - to navigate to the given tab. Note that the names of the default tabs are the same as those used for setting up the order of the tabs, while the names of the custom tabs are the same as those used in the custom tabs settings, with no whitespace if using multiple words.
 
 #### Supported Verbs
 | URI                      | Relation                                      | Verbs |
