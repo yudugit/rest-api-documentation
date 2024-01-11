@@ -1204,7 +1204,7 @@ When making a **GET** request to the following URI and query string:
 
 you should generate the HMAC using the string
 
-`GET/Yudu/services/1.0/permissions/?reader=1234&timestamp=123456789`
+`GET/Yudu/services/2.0/permissions/?reader=1234&timestamp=123456789`
 
 ##### Example 2:
 
@@ -1225,7 +1225,7 @@ and with the post data:
 you should generate the HMAC using the string
 
 ```
-POST/Yudu/services/1.0/permissions/?reader=1234&timestamp=123456789<subscriptionPeriod xmlns="http://schema.yudu.com">
+POST/Yudu/services/2.0/permissions/?reader=1234&timestamp=123456789<subscriptionPeriod xmlns="http://schema.yudu.com">
   <reader id="1234"/>
   <subscription id="5678"/>
   <startDate>2014-01-01T00:00:00Z</startDate>
@@ -1451,7 +1451,7 @@ Signature: YmYtVK8Se2GuFNlGNsRoiBT1WApfF85pPMVETI/FkFo=
 HTTP/1.1 201 CREATED
 Date: Mon, 11 Jul 2011 10:00:10 GMT
 Content-Type: application/vnd.yudu+xml
-Location: https://api.yudu.com/Yudu/services/1.0/readers/5678
+Location: https://api.yudu.com/Yudu/services/2.0/readers/5678
 
 <reader xmlns="http://schema.yudu.com" id="5678">
   <username>example</username>
@@ -1491,7 +1491,7 @@ We wish to find all editions with a name starting with "Example". Make a **GET**
 
 ```
 //Request
-GET /Yudu/services/1.0/editions?name=Examp&timestamp=1412586015 HTTP/1.1
+GET /Yudu/services/2.0/editions?name=Examp&timestamp=1412586015 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: k9PUkF0Vy9nQPnd5Dm6zRsXTyseOdlF+3F3/Bm0XUqY=
@@ -1548,7 +1548,7 @@ Given the above examples, we can now create a permission for this reader and one
 
 ``` xml
 //Request
-POST /Yudu/services/1.0/permissions?timestamp=1412586020 HTTP/1.1
+POST /Yudu/services/2.0/permissions?timestamp=1412586020 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: Xmvv80WIub0NazhL8TV50h4wxWxHuUs9cVYeASnoTFE=
@@ -1564,7 +1564,7 @@ Signature: Xmvv80WIub0NazhL8TV50h4wxWxHuUs9cVYeASnoTFE=
 HTTP/1.1 201 CREATED
 Date: Mon, 06 Oct 2014 10:00:20 GMT
 Content-Type: application/vnd.yudu+xml
-Location: https://api.yudu.com/Yudu/services/1.0/permissions/3456
+Location: https://api.yudu.com/Yudu/services/2.0/permissions/3456
 
 <permission id="3456">
   <reader id="5678"/>
@@ -1588,7 +1588,7 @@ Now we update the permission and add an expiry date:
 
 ``` xml
 //Request
-PUT /Yudu/services/1.0/permissions/3456?timestamp=1412586025 HTTP/1.1
+PUT /Yudu/services/2.0/permissions/3456?timestamp=1412586025 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: 4fUApJWR72cBwYfB00AtcJht5OhwhpuW9QCNq9jFePY=
@@ -1629,7 +1629,7 @@ Suppose we need to change a reader's password:
 
 ``` xml
 //Request
-PUT /Yudu/services/1.0/readers/5678?timestamp=1412586030 HTTP/1.1
+PUT /Yudu/services/2.0/readers/5678?timestamp=1412586030 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: VN7B4U5Uv4X4Yx+2qt7WUzCLBbb7Ssejaf1XHOmtACI=
@@ -1682,7 +1682,7 @@ Suppose we wish to find all iDevice enabled publications. Suppose further that w
 
 ```
 //Request
-GET /Yudu/services/1.0/publications/?iDeviceEnabled=true&limit=2&timestamp=1412586035 HTTP/1.1
+GET /Yudu/services/2.0/publications/?iDeviceEnabled=true&limit=2&timestamp=1412586035 HTTP/1.1
 Host: api.yudu.com
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
@@ -1703,7 +1703,7 @@ Content-Type: application/vnd.yudu+xml
       <androidEnabled>false</androidEnabled>
       <links>
         <link rel="self" name="self"
-              href="https://api.yudu.com/Yudu/services/1.0/publications/2345"
+              href="https://api.yudu.com/Yudu/services/2.0/publications/2345"
               type="application/vnd.yudu+xml"/>
       </links>
     </publication>
@@ -1713,7 +1713,7 @@ Content-Type: application/vnd.yudu+xml
       <androidEnabled>true</androidEnabled>
       <links>
         <link rel="self" name="self"
-              href="https://api.yudu.com/Yudu/services/1.0/publications/6789"
+              href="https://api.yudu.com/Yudu/services/2.0/publications/6789"
               type="application/vnd.yudu+xml"/>
       </links>
     </publication>
@@ -1730,7 +1730,7 @@ We can see that there were 3 results and we are only seeing the first two, as pe
 
 ```
 //Request
-GET /Yudu/services/1.0/publications/?iDeviceEnabled=true&limit=2&offset=2&timestamp=1412586040 HTTP/1.1
+GET /Yudu/services/2.0/publications/?iDeviceEnabled=true&limit=2&offset=2&timestamp=1412586040 HTTP/1.1
 Host: api.yudu.com
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
@@ -1751,7 +1751,7 @@ Content-Type: application/vnd.yudu+xml
       <androidEnabled>false</androidEnabled>
       <links>
         <link rel="self" name="self"
-              href="https://api.yudu.com/Yudu/services/1.0/publications/4321"
+              href="https://api.yudu.com/Yudu/services/2.0/publications/4321"
               type="application/vnd.yudu+xml"/>
       </links>
     </publication>
@@ -1772,7 +1772,7 @@ Suppose we wish to find all subscriptions which contain the edition with id 5678
 
 ```
 //Request
-GET /Yudu/services/1.0/subscriptions/?edition=5678&sort=subscriptionType_desc&timestamp=1412586045 HTTP/1.1
+GET /Yudu/services/2.0/subscriptions/?edition=5678&sort=subscriptionType_desc&timestamp=1412586045 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: ipNslQR4oH6lWhx9Kqr5pNKs7T8zg6TNzgifWnQtl8M=
@@ -1835,7 +1835,7 @@ Given the above examples, we can now create a subscription period for a reader a
 
 ``` xml
 //Request
-POST /Yudu/services/1.0/subscriptionPeriods/?timestamp=1412586050 HTTP/1.1
+POST /Yudu/services/2.0/subscriptionPeriods/?timestamp=1412586050 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: azckQ5GtqtDQe0EW6v5EBsC79QMXg9e/k1yezUKPFjA=
@@ -1853,7 +1853,7 @@ Signature: azckQ5GtqtDQe0EW6v5EBsC79QMXg9e/k1yezUKPFjA=
 HTTP/1.1 201 CREATED
 Date: Mon, 06 Oct 2014 10:00:50 GMT
 Content-Type: application/vnd.yudu+xml
-Location: https://api.yudu.com/Yudu/services/1.0/subscriptionPeriods/7654
+Location: https://api.yudu.com/Yudu/services/2.0/subscriptionPeriods/7654
 
 <subscriptionPeriod xmlns="http://schema.yudu.com" id="7654">
   <reader id="1234"/>
@@ -1880,7 +1880,7 @@ Suppose a reader has logged in from too many different devices and you would lik
 
 ``` xml
 //Request
-DELETE /Yudu/services/1.0/readers/1234/authorisedComputers/?timestamp=1412586055 HTTP/1.1
+DELETE /Yudu/services/2.0/readers/1234/authorisedComputers/?timestamp=1412586055 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: bGCNgoiseJ7qom8R1czUxoBlmMTSkpRgeccVOQO+VoY=
@@ -1896,7 +1896,7 @@ Given a the username and password for a reader we can check whether such a reade
 
 ``` xml
 //Request
-GET /Yudu/services/1.0/readers/?username=example&timestamp=1412586060 HTTP/1.1
+GET /Yudu/services/2.0/readers/?username=example&timestamp=1412586060 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: h/jKtsHKkNvAb87mElz5xFr9y7/9XaZGcD8qDwjgiFo=
@@ -1942,7 +1942,7 @@ Then follow the authentication link for the reader and make a **PUT** with an au
 
 ``` xml
 //Request
-PUT /Yudu/services/1.0/readers/?username=aUsername&timestamp=1412586065 HTTP/1.1
+PUT /Yudu/services/2.0/readers/?username=aUsername&timestamp=1412586065 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: ujp8wI5gGPwIBON3lzQD/ZY5qtR3zLBd/zKc4aNF5/c=
