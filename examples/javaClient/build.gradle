@@ -3,16 +3,18 @@ apply plugin: 'application'
 
 version = '1.0'
 
-mainClassName = 'com.yudu.rest.RequestBuilder'
+application {
+    mainClass.set('com.yudu.rest.RequestBuilder')
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile 'commons-codec:commons-codec:1.9'
-    compile 'com.google.guava:guava:18.0'
-    compile 'joda-time:joda-time:2.4'
-    compile 'org.apache.commons:commons-lang3:3.3.2'
-    compile 'org.apache.httpcomponents:httpclient:4.3.5'
+    implementation 'commons-codec:commons-codec:1.9'
+    implementation 'com.google.guava:guava:18.0'
+    implementation 'joda-time:joda-time:2.4'
+    implementation 'org.apache.commons:commons-lang3:3.3.2'
+    implementation 'org.apache.httpcomponents:httpclient:4.3.5'
 }
