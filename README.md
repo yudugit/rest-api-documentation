@@ -981,7 +981,7 @@ A simple use-case could be as follows:
     2. retrieving the token value from the response
     3. inserting the user ID, token value, Reader ID into the edition's target URL with the query parameter names shown above
     4. returning a 303 redirect with the modified edition URI as the target
-3. The reader's browser redirects to the edition and the edition uses the token to authenticate, logging in that specific Reader.
+4. The reader's browser redirects to the edition and the edition uses the token to authenticate, logging in that specific Reader.
 
 ### Targeted Notifications
 A targeted notification represents a notification to be sent to a specified list of Yudu subscribers and/or third-party subscribers, via Firebase and APNS.
