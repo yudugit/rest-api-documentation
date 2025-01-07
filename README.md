@@ -867,13 +867,15 @@ A **PUT** request authenticates a reader.. The request body must contain the XML
 
 The token resource allows a third party to generate a short-lifetime SSO token that can be passed to a Web Edition for user authentication without a login dialog. Note that multiple tiers of authorisation are available, meaning this resource is additionally available as a sub-resource of other resources.
 
-There are two primary ways to create and use SSO tokens;
+There are two primary ways to create and use SSO tokens:
 
-The first is to simply bypass the login requirement of a login-protected edition, in which case, you would provide a key (some sort of unique ID like your internal user ID or their e-mail address, etc), and you would receive a token back from our API, then you would load the edition URL providing both that key and the token you received as URL query parameters.
+The first is to simply bypass the login requirement of a login-protected edition, in which case, you would provide a key (some sort of unique ID like your internal user ID or their e-mail address, etc), and you would receive a token back from our API. Then, you would load the edition URL providing both that key and the token you received as URL query parameters.
 
-The second way is to use the same approach as above, but adds an additional URL parameter when loading the edition - `ugcKey`. This should correspond to an ID of a Reader, and if used, will specifically log that user into the edition, rather than bypassing login, such that all the benefits of logging in with a username/password will then work as normal (UGC Sync, etc.).
+The second way uses the same approach as above, but adds an additional URL parameter when loading the edition - `ugcKey`. This should correspond to an ID of a Reader, and if used, will specifically log that user into the edition, rather than bypassing login, such that all the benefits of logging in with a username/password will then work as normal (UGC Sync, etc.).
 
-With this second approach, you do need to lookup (or store in your own database), the end-user's Reader ID first, at which point you could use that for the key to generate the token, then pass the key, token and ugcKey as specific URL parameters when loading the edition.  **Note that these names are different when passing the parameters - see below for further details in the Using a Token section.**
+With this second approach, you do need to request the Reader ID from the appropriate endpoint (or retrieve from your own cached copy in your database if you've retrieved it previously and stored it) the end-user's Reader ID. 
+
+You can then use that Reader ID as the key to generate the token (although any unique id/string will work for the key), then pass the key, resulting token and the correct Reader ID (as the ugcKey query parameter) as specific URL query parameters when loading the edition - i.e. this second approach requires 3 query parameters including the correct Reader ID, instead of the two parameters required in the first approach.  **Note that these names are different when passing the parameters - see below for further details in the Using a Token section.**
 
 **The second approach does require that you have your end-users stored in Publisher as Readers (subscribers if you're using the web UI), and doesn't work with third party authentication systems, whilst the first approach can be used for any user of your own website, to bypass the edition's login requirement.**
 
@@ -964,7 +966,7 @@ A simple use-case could be as follows:
 
 1. A reader clicks on a link on your webpage indicating they wish to view an edition.
 2. Your server reacts to that request by:
-    1. sending a request to this API for a token for that user
+    1. sending a request to this API for a token for a specific user ID (this can be anything as long as it's unique)
     2. retrieving the token value from the response
     3. inserting the token value and user ID into the edition's target URL
     4. returning a 303 redirect with the modified edition URI as the target
@@ -975,9 +977,9 @@ As a second example, if your edition URL is `http://hosted.edition.domain/path/t
 A simple use-case could be as follows:
 
 1. A reader clicks on a link on your webpage indicating they wish to view an edition.
-2. Your server looks up the Reader ID for that user (and probably should cache this in your database so this step isn't necessary in future, making it faster for the end-user).
+2. Your server looks up the Reader ID for that user (and probably should cache this in your database so this step isn't necessary in future, making it faster for the end-user). Note that this step could be done at any prior point to speed this up - such as when the end-user first logs into your website, if there isn't a cached value for this already in your database, and similar approaches
 3. Your server reacts to that request by:
-    1. sending a request to this API for a token for a specific user ID (this can be anything as long as it's unique, but since you've just looked up the Reader ID, feel free to use that).
+    1. sending a request to this API for a token for a specific user ID (this can be anything as long as it's unique, but since you've just looked up the Reader ID, feel free to use that)
     2. retrieving the token value from the response
     3. inserting the user ID, token value, Reader ID into the edition's target URL with the query parameter names shown above
     4. returning a 303 redirect with the modified edition URI as the target
