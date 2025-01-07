@@ -978,11 +978,11 @@ A simple use-case could be as follows:
 
 1. A reader clicks on a link on your webpage indicating they wish to view an edition.
 2. Your server looks up the Reader ID for that user (and probably should cache this in your database so this step isn't necessary in future, making it faster for the end-user). Note that this step could be done at any prior point to speed this up - such as when the end-user first logs into your website, if there isn't a cached value for this already in your database, and similar approaches
-3. Your server reacts to that request by:
-    1. sending a request to this API for a token for a specific user ID (this can be anything as long as it's unique, but since you've just looked up the Reader ID, feel free to use that)
-    2. retrieving the token value from the response
-    3. inserting the user ID, token value, Reader ID into the edition's target URL with the query parameter names shown above
-    4. returning a 303 redirect with the modified edition URI as the target
+3. Your server then:
+    1. sends a request to this API for a token for a specific user ID (this can be anything as long as it's unique, but since you've just looked up the Reader ID, feel free to use that)
+    2. retrieves the token value from the response
+    3. inserts the user ID, token value and Reader ID into the edition's target URL with the query parameter names shown above
+    4. returns a 303 redirect with the modified edition URI as the target
 4. The reader's browser redirects to the edition and the edition uses the token to authenticate, logging in that specific Reader.
 
 ### Targeted Notifications
