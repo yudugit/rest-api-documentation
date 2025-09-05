@@ -29,6 +29,7 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
   - [Authentication](#authentication)
   - [Web Edition SSO Tokens](#web-edition-sso-tokens)
   - [Targeted Notifications](#targeted-notifications)
+  - [Stored File](#stored-file)
   - [Categories](#categories)
   - [categoryEditions](#categoryeditions)
 - [Technical Details](#technical-details)
@@ -74,6 +75,7 @@ The following terminology is used in this document:
 - **Authorised device** - A single device which has been used by a reader to access an edition
 - **Web Edition SSO token** - A Single Sign-On (SSO) token valid for authentication for some set of (Web) Editions
 - **Node** - The Yudu Publisher system is arranged into a hierarchy of nodes. For most users you won't need to worry about the node ID of your Readers, however if you would like to place them at different levels within your part of the hierarchy you can by specifying it.
+- **Stored file** - A file stored in AWS S3, which is associated with a node
 - **Category** - A Yudu category
 - **categoryEdition** - Categories assigned to an edition
 
@@ -146,29 +148,31 @@ In order to determine which verbs can be used to interact with a resource, it is
 
 The following table summarises all the available resource URIs, and the effect of each verb on them. Each of them is relative to the base URI for our API: `https://api.yudu.com/Yudu/services/2.0`.
 
-| Resource                                              | GET                                                 | POST                                  | PUT                                             | DELETE                                                               |
-|-------------------------------------------------------|-----------------------------------------------------|---------------------------------------|-------------------------------------------------|----------------------------------------------------------------------|
-| [/](#service-description)                             | Returns a list of links to the other available URIs | N/A                                   | N/A                                             | N/A                                                                  |
-| [/readers/](#reader)                                  | Returns a list of readers                           | Creates a new reader                  | N/A                                             | N/A                                                                  |
-| [/readers/{id}](#reader)                              | Returns the details of a single reader              | N/A                                   | Updates a reader                                | Deletes a reader                                                     |
-| [/editions/](#edition)                                | Gets a list of all editions                         | N/A                                   | N/A                                             | N/A                                                                  |
-| [/editions/{id}](#edition)                            | Gets the details of a single edition                | N/A                                   | N/A                                             | N/A                                                                  |
-| [/permissions/](#permission)                          | Lists all edition permissions by readers            | Creates a new permission for a reader | N/A                                             | N/A                                                                  |
-| [/permissions/{id}](#permission)                      | Gets the details of a single permission             | N/A                                   | Updates a permission                            | Removes an existing permission                                       |
-| [/readerLogins/](#reader-login)                       | Gets a list of all reader logins                    | N/A                                   | N/A                                             | N/A                                                                  |
-| [/readerLogins/{id}](#reader-login)                   | Gets the details of a single reader login           | N/A                                   | N/A                                             | N/A                                                                  |
-| [/publications/](#publication)                        | Gets a list of all publications                     | N/A                                   | N/A                                             | N/A                                                                  |
-| [/publications/{id}](#publication)                    | Gets the details of a single publication            | N/A                                   | N/A                                             | N/A                                                                  |
-| [/subscriptions/](#subscription)                      | Gets a list of subscriptions                        | N/A                                   | N/A                                             | N/A                                                                  |
-| [/subscriptions/{id}](#subscription)                  | Gets the details of a single subscription           | N/A                                   | N/A                                             | N/A                                                                  |
-| [/subscriptionPeriods/](#subscription-period)         | Gets a list of subscription periods                 | N/A                                   | N/A                                             | N/A                                                                  |
-| [/subscriptionPeriods/{id}](#subscription-period)     | Gets the details of a single subscription period    | Creates a new subscription period     | Updates a subscription period                   | Removes an existing subscription period                              |
-| [/readers/{id}/authorisedDevices](#authorised-device) | N/A                                                 | N/A                                   | N/A                                             | Removes all authorised devices for a reader                          |
-| [/readers/{id}/authentication](#authentication)       | N/A                                                 | N/A                                   | Authenticates a reader's password               | N/A                                                                  |
-| [/targetedNotifications](#targeted-notifications)     | N/A                                                 | Sends a targeted notification         | N/A                                             | N/A                                                                  |
-| [/Categories/](#categories)                           | Gets a list of categories                           | Creates a new category                | N/A                                             | Removes categories at a specific publication node                    |
-| [/Categories/{code}](#categories)                     | Gets a list of categories which match code          | N/A                                   | Updates category at a specific publication node | Removes category at a specific publication node                      |
-| [/categoryEditions/](#categoryeditions)               | Gets a list of all category editions                | Create a new category edition         | N/A                                             | Remove category editions at publication node level or edition  level |
+| Resource                                                        | GET                                                                               | POST                                  | PUT                                             | DELETE                                                               |
+|-----------------------------------------------------------------|-----------------------------------------------------------------------------------|---------------------------------------|-------------------------------------------------|----------------------------------------------------------------------|
+| [/](#service-description)                                       | Returns a list of links to the other available URIs                               | N/A                                   | N/A                                             | N/A                                                                  |
+| [/readers/](#reader)                                            | Returns a list of readers                                                         | Creates a new reader                  | N/A                                             | N/A                                                                  |
+| [/readers/{id}](#reader)                                        | Returns the details of a single reader                                            | N/A                                   | Updates a reader                                | Deletes a reader                                                     |
+| [/editions/](#edition)                                          | Gets a list of all editions                                                       | N/A                                   | N/A                                             | N/A                                                                  |
+| [/editions/{id}](#edition)                                      | Gets the details of a single edition                                              | N/A                                   | N/A                                             | N/A                                                                  |
+| [/permissions/](#permission)                                    | Lists all edition permissions by readers                                          | Creates a new permission for a reader | N/A                                             | N/A                                                                  |
+| [/permissions/{id}](#permission)                                | Gets the details of a single permission                                           | N/A                                   | Updates a permission                            | Removes an existing permission                                       |
+| [/readerLogins/](#reader-login)                                 | Gets a list of all reader logins                                                  | N/A                                   | N/A                                             | N/A                                                                  |
+| [/readerLogins/{id}](#reader-login)                             | Gets the details of a single reader login                                         | N/A                                   | N/A                                             | N/A                                                                  |
+| [/publications/](#publication)                                  | Gets a list of all publications                                                   | N/A                                   | N/A                                             | N/A                                                                  |
+| [/publications/{id}](#publication)                              | Gets the details of a single publication                                          | N/A                                   | N/A                                             | N/A                                                                  |
+| [/subscriptions/](#subscription)                                | Gets a list of subscriptions                                                      | N/A                                   | N/A                                             | N/A                                                                  |
+| [/subscriptions/{id}](#subscription)                            | Gets the details of a single subscription                                         | N/A                                   | N/A                                             | N/A                                                                  |
+| [/subscriptionPeriods/](#subscription-period)                   | Gets a list of subscription periods                                               | N/A                                   | N/A                                             | N/A                                                                  |
+| [/subscriptionPeriods/{id}](#subscription-period)               | Gets the details of a single subscription period                                  | Creates a new subscription period     | Updates a subscription period                   | Removes an existing subscription period                              |
+| [/readers/{id}/authorisedDevices](#authorised-device)           | N/A                                                                               | N/A                                   | N/A                                             | Removes all authorised devices for a reader                          |
+| [/readers/{id}/authentication](#authentication)                 | N/A                                                                               | N/A                                   | Authenticates a reader's password               | N/A                                                                  |
+| [/targetedNotifications](#targeted-notifications)               | N/A                                                                               | Sends a targeted notification         | N/A                                             | N/A                                                                  |
+| [/nodes/{nodeId}/storedFiles/supportedFileUsages](#stored-file) | Gets the file usages supported at the given node and the corresponding file types | N/A                                   | N/A                                             | N/A                                                                  | 
+| [/nodes/{nodeId}/storedFiles/](#stored-file)                    | N/A                                                                               | N/A                                   | (Re-)uploads a file with a given usage          | N/A                                                                  |
+[/Categories/](#categories)                                       | Gets a list of categories                                                         | Creates a new category                | N/A                                             | Removes categories at a specific publication node                    |
+| [/Categories/{code}](#categories)                               | Gets a list of categories which match code                                        | N/A                                   | Updates category at a specific publication node | Removes category at a specific publication node                      |
+| [/categoryEditions/](#categoryeditions)                         | Gets a list of all category editions                                              | Create a new category edition         | N/A                                             | Remove category editions at publication node level or edition  level |
 
 ## Resources
 
@@ -868,7 +872,19 @@ A **PUT** request authenticates a reader.. The request body must contain the XML
 
 ### Web Edition SSO Tokens
 
-The token resource allows a third party to generate a short-lifetime SSO token that can be passed to a Web Edition for user authentication without a login dialog. Note that multiple tiers of authorisation are available, meaning this resource is additionally available as a sub-resource of other resources. It requires a unique User ID for whom to generate the token.
+The token resource allows a third party to generate a short-lifetime SSO token that can be passed to a Web Edition for user authentication without a login dialog. Note that multiple tiers of authorisation are available, meaning this resource is additionally available as a sub-resource of other resources.
+
+There are two primary ways to create and use SSO tokens:
+
+The first is to simply bypass the login requirement of a login-protected edition, in which case, you would provide a key (some sort of unique ID like your internal user ID or their e-mail address, etc), and you would receive a token back from our API. Then, you would load the edition URL providing both that key and the token you received as URL query parameters.
+
+The second way uses the same approach as above, but adds an additional URL parameter when loading the edition - `ugcKey`. This should correspond to an ID of a Reader, and if used, will specifically log that user into the edition, rather than bypassing login, such that all the benefits of logging in with a username/password will then work as normal (UGC Sync, etc.).
+
+With this second approach, you do need to request the Reader ID from the appropriate endpoint (or retrieve from your own cached copy in your database if you've retrieved it previously and stored it) the end-user's Reader ID. 
+
+You can then use that Reader ID as the key to generate the token (although any unique id/string will work for the key), then pass the key, resulting token and the correct Reader ID (as the ugcKey query parameter) as specific URL query parameters when loading the edition - i.e. this second approach requires 3 query parameters including the correct Reader ID, instead of the two parameters required in the first approach.  **Note that these names are different when passing the parameters - see below for further details in the Using a Token section.**
+
+**The second approach does require that you have your end-users stored in Publisher as Readers (subscribers if you're using the web UI), and doesn't work with third party authentication systems, whilst the first approach can be used for any user of your own website, to bypass the edition's login requirement.**
 
 #### XML Representation
 
@@ -876,7 +892,7 @@ The token resource allows a third party to generate a short-lifetime SSO token t
 
 ``` xml
 <authToken xmlns="http://schema.yudu.com">
-    <key>uniqueUserIdentification</key>
+    <key>uniqueUserIdentificationOfSomeKind</key>
     <tokenValue>0123456789abcdefghijklmnopqrstu</tokenValue>
     <validity>Single edition</validity>
 </authToken>
@@ -949,17 +965,32 @@ To successfully authenticate an edition using the token details, the following q
 | -------------------- | -------------------- | -------------------------------------------------------------- |
 | `yuduAuthId`         | `key`                | The unique User ID for whom the token was generated            |
 | `yuduAuthToken`      | `tokenValue`         | The generated value of the token returned in the response body |
+| `ugcKey`             | n/a                  | (Optional) - this will log a specific Reader ID in             |
 
 For example, if your edition URL is `http://hosted.edition.domain/path/to/edition/index.html` then the token above could be used by directing the user to the destination `http://hosted.edition.domain/path/to/edition/index.html?yuduAuthId=uniqueUserIdentification&yuduAuthToken=0123456789abcdefghijklmnopqrstu`.
+
 A simple use-case could be as follows:
 
 1. A reader clicks on a link on your webpage indicating they wish to view an edition.
 2. Your server reacts to that request by:
-    1. sending a request to this API for a token for that user
+    1. sending a request to this API for a token for a specific user ID (this can be anything as long as it's unique)
     2. retrieving the token value from the response
     3. inserting the token value and user ID into the edition's target URL
     4. returning a 303 redirect with the modified edition URI as the target
-3. The reader's browser redirects to the edition and the edition uses the token to authenticate.
+3. The reader's browser redirects to the edition and the edition uses the token to authenticate, bypassing the login requirement.
+
+As a second example, if your edition URL is `http://hosted.edition.domain/path/to/edition/index.html` then the token above could be used by directing the user to the destination `http://hosted.edition.domain/path/to/edition/index.html?yuduAuthId=uniqueUserIdentification&yuduAuthToken=0123456789abcdefghijklmnopqrstu&ugcKey=12345`.
+
+A simple use-case could be as follows:
+
+1. A reader clicks on a link on your webpage indicating they wish to view an edition.
+2. Your server looks up the Reader ID for that user (and probably should cache this in your database so this step isn't necessary in future, making it faster for the end-user). Note that this step could be done at any prior point to speed this up - such as when the end-user first logs into your website, if there isn't a cached value for this already in your database, and similar approaches
+3. Your server then:
+    1. sends a request to this API for a token for a specific user ID (this can be anything as long as it's unique, but since you've just looked up the Reader ID, feel free to use that)
+    2. retrieves the token value from the response
+    3. inserts the user ID, token value and Reader ID into the edition's target URL with the query parameter names shown above
+    4. returns a 303 redirect with the modified edition URI as the target
+4. The reader's browser redirects to the edition and the edition uses the token to authenticate, logging in that specific Reader.
 
 ### Targeted Notifications
 A targeted notification represents a notification to be sent to a specified list of Yudu subscribers and/or third-party subscribers, via Firebase and APNS.
@@ -976,6 +1007,9 @@ The targeted notification resource is represented in XML with a `targetedNotific
     <message>Notification body</message>
     <title>Notification title</title>
     <notificationPriority>DEFAULT</notificationPriority>
+	<disableSound>false</disableSound>
+	<iDeviceDeepLink>myapp://mylink</iDeviceDeepLink>
+	<androidDeepLink>myapp://mylink</androidDeepLink>
     <subscribers>
         <thirdPartySubscriberToken>abcdef</thirdPartySubscriberToken>
         <subscriberUsername>abcdef</subscriberUsername>
@@ -990,6 +1024,9 @@ The targeted notification resource is represented in XML with a `targetedNotific
 | `message`              | The body of the notification                        | String                                        | Required |
 | `title`                | The title of the notification                       | String                                        | Allowed  |
 | `notificationPriority` | The priority of the notification                    | [NotificationPriority](#notificationpriority) | Allowed  |
+| `disableSound`         | Disable the notification sound                      |  Boolean                                      | Allowed  |
+| `iDeviceDeepLink`      | The deep link to be followed on iDevice apps        | String                                        | Allowed  |
+| `androidDeepLink`      | The deep link to be followed on Android apps        | String                                        | Allowed  |            
 | `subscribers`          | The list of subscribers to send the notification to | [Subscriber elements](#subscriber-elements)   | Required |
 
 ##### NotificationPriority
@@ -1008,6 +1045,15 @@ The `subscribers` element can contain multiple third party subscribers and/or Yu
 | `thirdPartySubscriberToken` | Third party subscriber identifier | String |
 | `subscriberUsername`        | Yudu subscriber username          | String |
 
+##### Disable Sound
+The priorities in iOS are differentiated by the sounds which are used thus disabling the sound would make the priority selected redundant.
+
+##### Deep Links
+The deep links that are currently supported are:
+* `<appScheme>://pageLink/editionId/<editionId>/` - to navigate to the given edition
+* `<appScheme>://pageLink/editionId/<editionId>/pageNumber/<pageNumber>/` - to navigate to the given edition at the given page number
+* `<appScheme>://latest-edition/` - to navigate to the latest edition
+* `<appScheme>://<tabName>` - to navigate to the given tab. Note that the names of the default tabs are the same as those used for setting up the order of the tabs, while the names of the custom tabs are the same as those used in the custom tabs settings, with no whitespace if using multiple words.
 
 #### Supported Verbs
 | URI                      | Relation                                      | Verbs |
@@ -1226,6 +1272,100 @@ A **DELETE** request removes authorised categoryEditions.  The following query s
 | `editionId`             | Required  | Required  |
 | `publicationNodeId`     | Required  | Required  |
 
+### Stored File
+
+A stored file represents a file which is associated with a node and which is stored in AWS S3.
+
+#### XML Representation
+
+##### Single Supported File Usage
+
+``` xml
+<supportedFileUsage name="SOME_FILE_USAGE">
+    <fileTypeList>
+        <fileType>.someExtension</fileType>
+        <fileType>.someOtherExtension</fileType>
+    </fileTypeList>
+</supportedFileUsage>
+```
+
+**Note:** The file type list can consist of one or more elements.
+
+##### Supported File Usage List
+
+``` xml
+<storedFiles xmlns="http://schema.yudu.com">
+    <supportedFileUsageList>
+        // some supported file usage elements
+    </supportedFileUsageList>
+    <links>
+        <link rel="http://schema.yudu.com/storedFiles" name="storedFiles"
+              href="https://api.yudu.com/Yudu/services/2.0/nodes/<the_given_node>/storedFiles" type="application/vnd.yudu+xml"/>
+    </links>
+</storedFiles>
+```
+
+#### <a name="storedFile-permissibleFields"></a>Permissible Fields
+
+This section refers to the fields relevant to the main stored files requests, not the supported file usages request.
+
+| Element / Attribute  | PUT      |
+|----------------------|----------|
+| `file`               | Required |
+| `usage`              | Allowed  |
+
+#### <a name="storedFile-supportedFileUsageList"></a>Supported File Usage List
+
+| URI                                               | Relation                                     | Verbs   |
+|---------------------------------------------------|----------------------------------------------|---------|
+| `/nodes/{nodeId}/storedFiles/supportedFileUsages` | `http://schema.yudu.com/supportedFileUsages` | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a list of supported file usages.
+
+#### Stored File List
+
+| URI                           | Relation                             | Verbs   |
+|-------------------------------|--------------------------------------|---------|
+| `/nodes/{nodeId}/storedFiles` | `http://schema.yudu.com/storedFiles` | **PUT** |
+
+##### PUT
+
+A **PUT** request uploads a file at the specified node. It must be a multipart request with a `multipart/form-data` Content-Type. The body must contain the required field `file` as mentioned in [Permissible Fields](#storedFile-permissibleFields). If the `usage` field is missing, it defaults to `NOT_SPECIFIED`. A full list of file usages supported at a given node can be obtained via the [Supported File Usage List](#storedFile-supportedFileUsageList) request. If a file is uploaded with the same name and the same usage as an existing file, it replaces the original.
+
+A successful **PUT** will result in a **200 OK** response except for uploading a PDF file with a `NOT_SPECIFIED` usage which results in a **201 ACCEPTED** response, as the file is processed asynchronously.
+
+If a request fails, the response body will contain an XML representation of the error, including the `code`, `customError` (if relevant), and `detail` elements, as illustrated in the example below.
+
+```xml
+<error xmlns="http://schema.yudu.com">
+  <code>CLIENT_ERROR</code>
+  <customError>1001</customError>
+  <detail>This file is empty. Please upload a valid file.</detail>
+</error>
+```
+
+See the following table for more information about errors.
+
+| Response status code | Code         | Custom error | Description                                                         |
+|----------------------|--------------|--------------|---------------------------------------------------------------------|
+| 400                  | CLIENT_ERROR | 1001         | Empty file                                                          |
+| 400                  | CLIENT_ERROR | 1002         | Type of node does not support selected usage                        |
+| 400                  | CLIENT_ERROR | 1003         | Invalid file                                                        |
+| 400                  | CLIENT_ERROR | 1004         | Invalid mapping or table of contents file in HTML articles zip file |
+| 400                  | CLIENT_ERROR | 1005         | Invalid HTML articles mapping file                                  |
+| 400                  | CLIENT_ERROR | 1006         | Invalid HTML articles table of contents file                        |
+| 400                  | CLIENT_ERROR | 1007         | Invalid table of contents file                                      |
+| 400                  | CLIENT_ERROR | 1008         | Invalid smart catalog file                                          |
+| 400                  | CLIENT_ERROR | 1009         | Malformed smart catalog file                                        |
+| 400                  | CLIENT_ERROR | 1010         | Invalid read aloud timings file                                     |
+| 409                  | CLIENT_ERROR | 1011         | Temporary file exists                                               |
+| 400                  | CLIENT_ERROR | 1012         | A PDF file with the same name but a different usage already exists  |
+| 400                  | CLIENT_ERROR | 1013         | PDF file uploaded at non-edition node                               |
+| 400                  | CLIENT_ERROR | 1014         | Existing PDF file is too old to allow re-uploading                  |
+| 500                  | SERVER_ERROR |              | An internal server error has occured                                |
+
 ## Technical Details
 
 ### Request Authentication
@@ -1261,7 +1401,7 @@ When making a **GET** request to the following URI and query string:
 
 you should generate the HMAC using the string
 
-`GET/Yudu/services/1.0/permissions/?reader=1234&timestamp=123456789`
+`GET/Yudu/services/2.0/permissions/?reader=1234&timestamp=123456789`
 
 ##### Example 2:
 
@@ -1282,7 +1422,7 @@ and with the post data:
 you should generate the HMAC using the string
 
 ```
-POST/Yudu/services/1.0/permissions/?reader=1234&timestamp=123456789<subscriptionPeriod xmlns="http://schema.yudu.com">
+POST/Yudu/services/2.0/permissions/?reader=1234&timestamp=123456789<subscriptionPeriod xmlns="http://schema.yudu.com">
   <reader id="1234"/>
   <subscription id="5678"/>
   <startDate>2014-01-01T00:00:00Z</startDate>
@@ -1508,7 +1648,7 @@ Signature: YmYtVK8Se2GuFNlGNsRoiBT1WApfF85pPMVETI/FkFo=
 HTTP/1.1 201 CREATED
 Date: Mon, 11 Jul 2011 10:00:10 GMT
 Content-Type: application/vnd.yudu+xml
-Location: https://api.yudu.com/Yudu/services/1.0/readers/5678
+Location: https://api.yudu.com/Yudu/services/2.0/readers/5678
 
 <reader xmlns="http://schema.yudu.com" id="5678">
   <username>example</username>
@@ -1548,7 +1688,7 @@ We wish to find all editions with a name starting with "Example". Make a **GET**
 
 ```
 //Request
-GET /Yudu/services/1.0/editions?name=Examp&timestamp=1412586015 HTTP/1.1
+GET /Yudu/services/2.0/editions?name=Examp&timestamp=1412586015 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: k9PUkF0Vy9nQPnd5Dm6zRsXTyseOdlF+3F3/Bm0XUqY=
@@ -1605,7 +1745,7 @@ Given the above examples, we can now create a permission for this reader and one
 
 ``` xml
 //Request
-POST /Yudu/services/1.0/permissions?timestamp=1412586020 HTTP/1.1
+POST /Yudu/services/2.0/permissions?timestamp=1412586020 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: Xmvv80WIub0NazhL8TV50h4wxWxHuUs9cVYeASnoTFE=
@@ -1621,7 +1761,7 @@ Signature: Xmvv80WIub0NazhL8TV50h4wxWxHuUs9cVYeASnoTFE=
 HTTP/1.1 201 CREATED
 Date: Mon, 06 Oct 2014 10:00:20 GMT
 Content-Type: application/vnd.yudu+xml
-Location: https://api.yudu.com/Yudu/services/1.0/permissions/3456
+Location: https://api.yudu.com/Yudu/services/2.0/permissions/3456
 
 <permission id="3456">
   <reader id="5678"/>
@@ -1645,7 +1785,7 @@ Now we update the permission and add an expiry date:
 
 ``` xml
 //Request
-PUT /Yudu/services/1.0/permissions/3456?timestamp=1412586025 HTTP/1.1
+PUT /Yudu/services/2.0/permissions/3456?timestamp=1412586025 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: 4fUApJWR72cBwYfB00AtcJht5OhwhpuW9QCNq9jFePY=
@@ -1686,7 +1826,7 @@ Suppose we need to change a reader's password:
 
 ``` xml
 //Request
-PUT /Yudu/services/1.0/readers/5678?timestamp=1412586030 HTTP/1.1
+PUT /Yudu/services/2.0/readers/5678?timestamp=1412586030 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: VN7B4U5Uv4X4Yx+2qt7WUzCLBbb7Ssejaf1XHOmtACI=
@@ -1739,7 +1879,7 @@ Suppose we wish to find all iDevice enabled publications. Suppose further that w
 
 ```
 //Request
-GET /Yudu/services/1.0/publications/?iDeviceEnabled=true&limit=2&timestamp=1412586035 HTTP/1.1
+GET /Yudu/services/2.0/publications/?iDeviceEnabled=true&limit=2&timestamp=1412586035 HTTP/1.1
 Host: api.yudu.com
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
@@ -1760,7 +1900,7 @@ Content-Type: application/vnd.yudu+xml
       <androidEnabled>false</androidEnabled>
       <links>
         <link rel="self" name="self"
-              href="https://api.yudu.com/Yudu/services/1.0/publications/2345"
+              href="https://api.yudu.com/Yudu/services/2.0/publications/2345"
               type="application/vnd.yudu+xml"/>
       </links>
     </publication>
@@ -1770,7 +1910,7 @@ Content-Type: application/vnd.yudu+xml
       <androidEnabled>true</androidEnabled>
       <links>
         <link rel="self" name="self"
-              href="https://api.yudu.com/Yudu/services/1.0/publications/6789"
+              href="https://api.yudu.com/Yudu/services/2.0/publications/6789"
               type="application/vnd.yudu+xml"/>
       </links>
     </publication>
@@ -1787,7 +1927,7 @@ We can see that there were 3 results and we are only seeing the first two, as pe
 
 ```
 //Request
-GET /Yudu/services/1.0/publications/?iDeviceEnabled=true&limit=2&offset=2&timestamp=1412586040 HTTP/1.1
+GET /Yudu/services/2.0/publications/?iDeviceEnabled=true&limit=2&offset=2&timestamp=1412586040 HTTP/1.1
 Host: api.yudu.com
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
@@ -1808,7 +1948,7 @@ Content-Type: application/vnd.yudu+xml
       <androidEnabled>false</androidEnabled>
       <links>
         <link rel="self" name="self"
-              href="https://api.yudu.com/Yudu/services/1.0/publications/4321"
+              href="https://api.yudu.com/Yudu/services/2.0/publications/4321"
               type="application/vnd.yudu+xml"/>
       </links>
     </publication>
@@ -1829,7 +1969,7 @@ Suppose we wish to find all subscriptions which contain the edition with id 5678
 
 ```
 //Request
-GET /Yudu/services/1.0/subscriptions/?edition=5678&sort=subscriptionType_desc&timestamp=1412586045 HTTP/1.1
+GET /Yudu/services/2.0/subscriptions/?edition=5678&sort=subscriptionType_desc&timestamp=1412586045 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: ipNslQR4oH6lWhx9Kqr5pNKs7T8zg6TNzgifWnQtl8M=
@@ -1892,7 +2032,7 @@ Given the above examples, we can now create a subscription period for a reader a
 
 ``` xml
 //Request
-POST /Yudu/services/1.0/subscriptionPeriods/?timestamp=1412586050 HTTP/1.1
+POST /Yudu/services/2.0/subscriptionPeriods/?timestamp=1412586050 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: azckQ5GtqtDQe0EW6v5EBsC79QMXg9e/k1yezUKPFjA=
@@ -1910,7 +2050,7 @@ Signature: azckQ5GtqtDQe0EW6v5EBsC79QMXg9e/k1yezUKPFjA=
 HTTP/1.1 201 CREATED
 Date: Mon, 06 Oct 2014 10:00:50 GMT
 Content-Type: application/vnd.yudu+xml
-Location: https://api.yudu.com/Yudu/services/1.0/subscriptionPeriods/7654
+Location: https://api.yudu.com/Yudu/services/2.0/subscriptionPeriods/7654
 
 <subscriptionPeriod xmlns="http://schema.yudu.com" id="7654">
   <reader id="1234"/>
@@ -1937,7 +2077,7 @@ Suppose a reader has logged in from too many different devices and you would lik
 
 ``` xml
 //Request
-DELETE /Yudu/services/1.0/readers/1234/authorisedComputers/?timestamp=1412586055 HTTP/1.1
+DELETE /Yudu/services/2.0/readers/1234/authorisedComputers/?timestamp=1412586055 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: bGCNgoiseJ7qom8R1czUxoBlmMTSkpRgeccVOQO+VoY=
@@ -1953,7 +2093,7 @@ Given a the username and password for a reader we can check whether such a reade
 
 ``` xml
 //Request
-GET /Yudu/services/1.0/readers/?username=example&timestamp=1412586060 HTTP/1.1
+GET /Yudu/services/2.0/readers/?username=example&timestamp=1412586060 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: h/jKtsHKkNvAb87mElz5xFr9y7/9XaZGcD8qDwjgiFo=
@@ -1999,7 +2139,7 @@ Then follow the authentication link for the reader and make a **PUT** with an au
 
 ``` xml
 //Request
-PUT /Yudu/services/1.0/readers/?username=aUsername&timestamp=1412586065 HTTP/1.1
+PUT /Yudu/services/2.0/readers/?username=aUsername&timestamp=1412586065 HTTP/1.1
 Accept: application/vnd.yudu+xml
 Authentication: abcd1234
 Signature: ujp8wI5gGPwIBON3lzQD/ZY5qtR3zLBd/zKc4aNF5/c=
