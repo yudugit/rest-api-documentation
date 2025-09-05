@@ -169,7 +169,9 @@ The following table summarises all the available resource URIs, and the effect o
 | [/readers/{id}/authentication](#authentication)                 | N/A                                                                               | N/A                                   | Authenticates a reader's password               | N/A                                                                  |
 | [/targetedNotifications](#targeted-notifications)               | N/A                                                                               | Sends a targeted notification         | N/A                                             | N/A                                                                  |
 | [/nodes/{nodeId}/storedFiles/supportedFileUsages](#stored-file) | Gets the file usages supported at the given node and the corresponding file types | N/A                                   | N/A                                             | N/A                                                                  | 
-| [/nodes/{nodeId}/storedFiles/](#stored-file)                    | N/A                                                                               | N/A                                   | (Re-)uploads a file with a given usage          | N/A                                                                  |
+| [/nodes/{nodeId}/storedFiles/](#stored-file)                    | Returns a list of stored files associated with a node                             | N/A                                   | (Re-)uploads a file with a given usage          | N/A                                                                  |
+| [/nodes/{nodeId}/storedFiles/{id}](#stored-file)                | Returns the details of a single stored file associated with a node                | N/A                                   | N/A                                             | N/A                                                                  |
+| [/nodes/{nodeId}/storedFiles/content/{id}](#stored-file)        | Returns base 64 byte array version of the content of a stored file                | N/A                                   | N/A                                             | N/A                                                                  |
 | [/Categories/](#categories)                                     | Gets a list of categories                                                         | Creates a new category                | N/A                                             | Removes categories at a specific publication node                    |
 | [/Categories/{code}](#categories)                               | Gets a list of categories which match code                                        | N/A                                   | Updates category at a specific publication node | Removes category at a specific publication node                      |
 | [/categoryEditions/](#categoryeditions)                         | Gets a list of all category editions                                              | Create a new category edition         | N/A                                             | Remove category editions at publication node level or edition  level |
@@ -1418,11 +1420,35 @@ This section refers to the fields relevant to the main stored files requests, no
 
 A **GET** request returns the XML representation of a list of supported file usages.
 
+#### Sortable Fields
+
+Stored files can be sorted by the following fields (see [Pagination](#pagination) for details):
+
+- `id`
+- `filename`
+- `fileType`
+- `fileSize`
+- `loginDate`
+- `supportedUsage`
+- `nodeId`
+
 #### Stored File List
 
-| URI                           | Relation                             | Verbs   |
-|-------------------------------|--------------------------------------|---------|
-| `/nodes/{nodeId}/storedFiles` | `http://schema.yudu.com/storedFiles` | **PUT** |
+| URI                           | Relation                             | Verbs            |
+|-------------------------------|--------------------------------------|------------------|
+| `/nodes/{nodeId}/storedFiles` | `http://schema.yudu.com/storedFiles` | **GET**, **PUT** |
+
+##### GET
+
+A **GET** request returns the XML representation of a list of stored files, optionally filtered using the following query string parameters, as well as the pagination parameters described in [Pagination](#pagination).
+
+| Filter              | Type     | Description                                               |
+|---------------------|----------|-----------------------------------------------------------|
+| **id**              | Integer  | Return only stored files with the given ID                |
+| **logicalFilename** | Integer  | Return only stored files with the given logical file name |
+| **fileType**        | String   | Return only stored files with the given file type         |
+| **fileSize**        | Long     | Return only stored files with the given file size         |
+| **supportedUsage**  | String   | Return only stored files with the given supported usage   |
 
 ##### PUT
 
@@ -1459,6 +1485,27 @@ See the following table for more information about errors.
 | 400                  | CLIENT_ERROR | 1013         | PDF file uploaded at non-edition node                               |
 | 400                  | CLIENT_ERROR | 1014         | Existing PDF file is too old to allow re-uploading                  |
 | 500                  | SERVER_ERROR |              | An internal server error has occured                                |
+
+#### Single Stored File
+
+| URI                                | Relation                                             | Verbs   |
+|------------------------------------|------------------------------------------------------|---------|
+| `/nodes/{nodeId}/storedFiles/{id}` | `http://schema.yudu.com/nodes/{nodeId}/storedFiles/` | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a stored file. Note that any fields which do not have a value may not be included in the XML representation.
+
+
+#### Single Stored File Content
+
+| URI                                        | Relation                                             | Verbs   |
+|--------------------------------------------|------------------------------------------------------|---------|
+| `/nodes/{nodeId}/storedFiles/content/{id}` | `http://schema.yudu.com/nodes/{nodeId}/storedFiles/` | **GET** |
+
+##### GET
+
+A **GET** request returns the base 64 representation of the content of the stored file.
 
 ## Technical Details
 
