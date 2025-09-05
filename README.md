@@ -30,6 +30,8 @@ See the [changelog](CHANGELOG.md) for major changes since v1.0.
   - [Web Edition SSO Tokens](#web-edition-sso-tokens)
   - [Targeted Notifications](#targeted-notifications)
   - [Stored File](#stored-file)
+  - [Categories](#categories)
+  - [categoryEditions](#categoryeditions)
 - [Technical Details](#technical-details)
   - [Request Authentication](#request-authentication)
   - [Exceptions](#exceptions)
@@ -74,6 +76,8 @@ The following terminology is used in this document:
 - **Web Edition SSO token** - A Single Sign-On (SSO) token valid for authentication for some set of (Web) Editions
 - **Node** - The Yudu Publisher system is arranged into a hierarchy of nodes. For most users you won't need to worry about the node ID of your Readers, however if you would like to place them at different levels within your part of the hierarchy you can by specifying it.
 - **Stored file** - A file stored in AWS S3, which is associated with a node
+- **Category** - A Yudu category
+- **categoryEdition** - Categories assigned to an edition
 
 ### Overview
 
@@ -144,28 +148,31 @@ In order to determine which verbs can be used to interact with a resource, it is
 
 The following table summarises all the available resource URIs, and the effect of each verb on them. Each of them is relative to the base URI for our API: `https://api.yudu.com/Yudu/services/2.0`.
 
-| Resource                                                        | GET                                                                               | POST                                  | PUT                                    | DELETE                                      |
-|-----------------------------------------------------------------|-----------------------------------------------------------------------------------|---------------------------------------|----------------------------------------|---------------------------------------------|
-| [/](#service-description)                                       | Returns a list of links to the other available URIs                               | N/A                                   | N/A                                    | N/A                                         |
-| [/readers/](#reader)                                            | Returns a list of readers                                                         | Creates a new reader                  | N/A                                    | N/A                                         |
-| [/readers/{id}](#reader)                                        | Returns the details of a single reader                                            | N/A                                   | Updates a reader                       | Deletes a reader                            |
-| [/editions/](#edition)                                          | Gets a list of all editions                                                       | N/A                                   | N/A                                    | N/A                                         |
-| [/editions/{id}](#edition)                                      | Gets the details of a single edition                                              | N/A                                   | N/A                                    | N/A                                         |
-| [/permissions/](#permission)                                    | Lists all edition permissions by readers                                          | Creates a new permission for a reader | N/A                                    | N/A                                         |
-| [/permissions/{id}](#permission)                                | Gets the details of a single permission                                           | N/A                                   | Updates a permission                   | Removes an existing permission              |
-| [/readerLogins/](#reader-login)                                 | Gets a list of all reader logins                                                  | N/A                                   | N/A                                    | N/A                                         |
-| [/readerLogins/{id}](#reader-login)                             | Gets the details of a single reader login                                         | N/A                                   | N/A                                    | N/A                                         |
-| [/publications/](#publication)                                  | Gets a list of all publications                                                   | N/A                                   | N/A                                    | N/A                                         |
-| [/publications/{id}](#publication)                              | Gets the details of a single publication                                          | N/A                                   | N/A                                    | N/A                                         |
-| [/subscriptions/](#subscription)                                | Gets a list of subscriptions                                                      | N/A                                   | N/A                                    | N/A                                         |
-| [/subscriptions/{id}](#subscription)                            | Gets the details of a single subscription                                         | N/A                                   | N/A                                    | N/A                                         |
-| [/subscriptionPeriods/](#subscription-period)                   | Gets a list of subscription periods                                               | N/A                                   | N/A                                    | N/A                                         |
-| [/subscriptionPeriods/{id}](#subscription-period)               | Gets the details of a single subscription period                                  | Creates a new subscription period     | Updates a subscription period          | Removes an existing subscription period     |
-| [/readers/{id}/authorisedDevices](#authorised-device)           | N/A                                                                               | N/A                                   | N/A                                    | Removes all authorised devices for a reader |
-| [/readers/{id}/authentication](#authentication)                 | N/A                                                                               | N/A                                   | Authenticates a reader's password      | N/A                                         |
-| [/targetedNotifications](#targeted-notifications)               | N/A                                                                               | Sends a targeted notification         | N/A                                    | N/A                                         |
-| [/nodes/{nodeId}/storedFiles/supportedFileUsages](#stored-file) | Gets the file usages supported at the given node and the corresponding file types | N/A                                   | N/A                                    | N/A                                         | 
-| [/nodes/{nodeId}/storedFiles/](#stored-file)                    | N/A                                                                               | N/A                                   | (Re-)uploads a file with a given usage | N/A                                         |
+| Resource                                                        | GET                                                                               | POST                                  | PUT                                             | DELETE                                                               |
+|-----------------------------------------------------------------|-----------------------------------------------------------------------------------|---------------------------------------|-------------------------------------------------|----------------------------------------------------------------------|
+| [/](#service-description)                                       | Returns a list of links to the other available URIs                               | N/A                                   | N/A                                             | N/A                                                                  |
+| [/readers/](#reader)                                            | Returns a list of readers                                                         | Creates a new reader                  | N/A                                             | N/A                                                                  |
+| [/readers/{id}](#reader)                                        | Returns the details of a single reader                                            | N/A                                   | Updates a reader                                | Deletes a reader                                                     |
+| [/editions/](#edition)                                          | Gets a list of all editions                                                       | N/A                                   | N/A                                             | N/A                                                                  |
+| [/editions/{id}](#edition)                                      | Gets the details of a single edition                                              | N/A                                   | N/A                                             | N/A                                                                  |
+| [/permissions/](#permission)                                    | Lists all edition permissions by readers                                          | Creates a new permission for a reader | N/A                                             | N/A                                                                  |
+| [/permissions/{id}](#permission)                                | Gets the details of a single permission                                           | N/A                                   | Updates a permission                            | Removes an existing permission                                       |
+| [/readerLogins/](#reader-login)                                 | Gets a list of all reader logins                                                  | N/A                                   | N/A                                             | N/A                                                                  |
+| [/readerLogins/{id}](#reader-login)                             | Gets the details of a single reader login                                         | N/A                                   | N/A                                             | N/A                                                                  |
+| [/publications/](#publication)                                  | Gets a list of all publications                                                   | N/A                                   | N/A                                             | N/A                                                                  |
+| [/publications/{id}](#publication)                              | Gets the details of a single publication                                          | N/A                                   | N/A                                             | N/A                                                                  |
+| [/subscriptions/](#subscription)                                | Gets a list of subscriptions                                                      | N/A                                   | N/A                                             | N/A                                                                  |
+| [/subscriptions/{id}](#subscription)                            | Gets the details of a single subscription                                         | N/A                                   | N/A                                             | N/A                                                                  |
+| [/subscriptionPeriods/](#subscription-period)                   | Gets a list of subscription periods                                               | N/A                                   | N/A                                             | N/A                                                                  |
+| [/subscriptionPeriods/{id}](#subscription-period)               | Gets the details of a single subscription period                                  | Creates a new subscription period     | Updates a subscription period                   | Removes an existing subscription period                              |
+| [/readers/{id}/authorisedDevices](#authorised-device)           | N/A                                                                               | N/A                                   | N/A                                             | Removes all authorised devices for a reader                          |
+| [/readers/{id}/authentication](#authentication)                 | N/A                                                                               | N/A                                   | Authenticates a reader's password               | N/A                                                                  |
+| [/targetedNotifications](#targeted-notifications)               | N/A                                                                               | Sends a targeted notification         | N/A                                             | N/A                                                                  |
+| [/nodes/{nodeId}/storedFiles/supportedFileUsages](#stored-file) | Gets the file usages supported at the given node and the corresponding file types | N/A                                   | N/A                                             | N/A                                                                  | 
+| [/nodes/{nodeId}/storedFiles/](#stored-file)                    | N/A                                                                               | N/A                                   | (Re-)uploads a file with a given usage          | N/A                                                                  |
+[/Categories/](#categories)                                       | Gets a list of categories                                                         | Creates a new category                | N/A                                             | Removes categories at a specific publication node                    |
+| [/Categories/{code}](#categories)                               | Gets a list of categories which match code                                        | N/A                                   | Updates category at a specific publication node | Removes category at a specific publication node                      |
+| [/categoryEditions/](#categoryeditions)                         | Gets a list of all category editions                                              | Create a new category edition         | N/A                                             | Remove category editions at publication node level or edition  level |
 
 ## Resources
 
@@ -1101,6 +1108,169 @@ A targeted notification response will be returned as an XML representation, prov
     </iOSResponse>
 </targetedNotificationResponse>
 ```
+### Categories
+ The category corresponds to a "Category" in Yudu Publisher.
+
+#### XML Representation
+
+##### Single Category
+
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<category xmlns="http://schema.yudu.com" limit="100" offset="0" total="3" truncated="false">
+  <categoryTitle>Category Example</categoryTitle>
+  <code>CATEGORY_EXAMPLE</code>
+  <containsAll>true</containsAll>
+  <defaultCategory>false</defaultCategory>
+  <ordering>4</ordering>
+  <publicationNodeId>61</publicationNodeId>
+</category>
+```
+
+##### Category List
+
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<categories xmlns="http://schema.yudu.com" limit="100" offset="0" total="8" truncated="false">
+  <categoryList>
+    <category>
+	  ⋮ // some category elements
+    </category>
+  </categoryList>
+  <links>
+    ⋮ // some link elements
+  </links>
+</categories>
+```
+
+#### Category List
+
+| URI               | Relation                               | Verbs   |
+| ----------------- | -------------------------------------- | ------- |
+| `/categories/`    | `http://schema.yudu.com/categories`    | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a list of categories, optionally filtered using the following query string parameters, as well as the pagination parameters described in [Pagination](#pagination).
+
+| Filter | Type | Description |
+| ------ | ---- | ----------- |
+| **publicationNodeId** | Long | Returns only the categories of the publication node with the given ID |
+
+##### POST
+
+A **POST** request creates a new category. The request body must contain the XML representation of category with the required fields as detailed in [Permissible Fields](#categories-permissible-fields).
+
+A successful **POST** will result in a **201 CREATED** response with a `Location` header specifying the URI of the newly created resource and the response body will contain the XML representation of the resource (including the `id`).
+
+##### DELETE
+
+A **DELETE** request removes all categories from a publication, with publicationNodeId required as a query strings.
+
+#### <a name="categories-permissible-fields"></a>Permissible Fields
+
+| Element / Attribute     | PUT       | POST      |
+| ----------------------- | --------- | --------- |
+| `categoryTitle`         | Required  | Required  |
+| `code`                  | Required  | Required  |
+| `containsAll`           | Required  | Required  |
+| `defaultCategory`       | Required  | Required  |
+| `ordering`              | Required  | Required  |
+| `publicationNodeId`     | Required  | Required  |
+
+#### Single Category
+
+| URI                   | Relation                              | Verbs   |
+| --------------------- | ------------------------------------- | ------- |
+| `/categories/{code}`  | `http://schema.yudu.com/categories`   | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of the category.
+
+##### PUT
+
+A **PUT** request updates an existing category. The request body must contain the XML representation of a category with publicationNodeId required as a query strings.
+
+##### DELETE
+
+A **DELETE** request deletes an existing category.
+
+#### <a name="category-query-strings"></a>Query Strings
+
+| Element / Attribute     | PUT       | DELETE    |
+| ----------------------- | --------- | --------- |
+| `publicationNodeId`     | Required  | Required  |
+
+
+### categoryEditions
+
+#### XML Representation
+
+##### Single categoryEdition
+
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<categoryEdition xmlns="http://schema.yudu.com" limit="100" offset="0" total="2" truncated="false">
+  <code>CATEGORY_EXAMPLE</code>
+  <editionId>72</editionId>
+  <publicationNodeId>58</publicationNodeId>
+</categoryEdition>
+```
+
+##### categoryEdition List
+
+``` xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<categoryEditions xmlns="http://schema.yudu.com" limit="100" offset="0" total="2" truncated="false">
+  <categoryEditionList>
+    <categoryEdition>
+      ⋮ // some categoryEdition elements
+    </categoryEdition>
+  </categoryEditionList>
+  <links>
+    ⋮ // some link elements
+  </links>
+</categoryEditions>
+```
+
+#### categoryEdition List
+
+| URI               | Relation                               | Verbs   |
+| ----------------- | -------------------------------------- | ------- |
+| `/categoryEditions/` | `http://schema.yudu.com/categoryEditions` | **GET** |
+
+##### GET
+
+A **GET** request returns the XML representation of a list of categoryEditions, optionally filtered using the following query string parameters, as well as the pagination parameters described in [Pagination](#pagination).
+
+| Filter | Type | Description |
+| ------ | ---- | ----------- |
+| **publicationNodeId** | Long | Return only categoryEditions that belong to a publication |
+| **EditionId** | Long | Return only categoryEditions that belong to an edition |
+
+##### POST
+
+A **POST** request creates a new categoryEditions. The request body must contain the XML representation of categoryEditions with the required fields as detailed in [Permissible Fields](#categoryeditions-permissible-fields).
+
+##### DELETE
+
+A **DELETE** request removes authorised categoryEditions.  The following query string parameters must be used, delete all is not possible.
+
+| Filter | Type | Description |
+| ------ | ---- | ----------- |
+| **publicationNodeId** | Long | Remove categoryEditions at publication which matches the id, category code must be specified |
+| **EditionId** | Long | Remove categoryEditions at edition which matches the id, it's possible to delete all categories at an edition |
+| **code** | String | Remove categoryEditions that matches the category code, either editionId or publicationNodeId must be specified |
+
+
+#### <a name="categoryEdition-permissible-fields"></a>Permissible Fields
+
+| Element / Attribute     | PUT       | POST      |
+| ----------------------- | --------- | --------- |
+| `code`                  | Required  | Required  |
+| `editionId`             | Required  | Required  |
+| `publicationNodeId`     | Required  | Required  |
 
 ### Stored File
 
