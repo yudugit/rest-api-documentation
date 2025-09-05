@@ -153,8 +153,8 @@ The following table summarises all the available resource URIs, and the effect o
 | [/](#service-description)                                       | Returns a list of links to the other available URIs                               | N/A                                   | N/A                                             | N/A                                                                  |
 | [/readers/](#reader)                                            | Returns a list of readers                                                         | Creates a new reader                  | N/A                                             | N/A                                                                  |
 | [/readers/{id}](#reader)                                        | Returns the details of a single reader                                            | N/A                                   | Updates a reader                                | Deletes a reader                                                     |
-| [/editions/](#edition)                                          | Gets a list of all editions                                                       | N/A                                   | N/A                                             | N/A                                                                  |
-| [/editions/{id}](#edition)                                      | Gets the details of a single edition                                              | N/A                                   | N/A                                             | N/A                                                                  |
+| [/editions/](#edition)                                          | Gets a list of all editions                                                       | Creates a new edition                 | N/A                                             | N/A                                                                  |
+| [/editions/{id}](#edition)                                      | Gets the details of a single edition                                              | N/A                                   | Updates and edition                             | Deletes an edition                                                   |
 | [/permissions/](#permission)                                    | Lists all edition permissions by readers                                          | Creates a new permission for a reader | N/A                                             | N/A                                                                  |
 | [/permissions/{id}](#permission)                                | Gets the details of a single permission                                           | N/A                                   | Updates a permission                            | Removes an existing permission                                       |
 | [/readerLogins/](#reader-login)                                 | Gets a list of all reader logins                                                  | N/A                                   | N/A                                             | N/A                                                                  |
@@ -170,7 +170,7 @@ The following table summarises all the available resource URIs, and the effect o
 | [/targetedNotifications](#targeted-notifications)               | N/A                                                                               | Sends a targeted notification         | N/A                                             | N/A                                                                  |
 | [/nodes/{nodeId}/storedFiles/supportedFileUsages](#stored-file) | Gets the file usages supported at the given node and the corresponding file types | N/A                                   | N/A                                             | N/A                                                                  | 
 | [/nodes/{nodeId}/storedFiles/](#stored-file)                    | N/A                                                                               | N/A                                   | (Re-)uploads a file with a given usage          | N/A                                                                  |
-[/Categories/](#categories)                                       | Gets a list of categories                                                         | Creates a new category                | N/A                                             | Removes categories at a specific publication node                    |
+| [/Categories/](#categories)                                     | Gets a list of categories                                                         | Creates a new category                | N/A                                             | Removes categories at a specific publication node                    |
 | [/Categories/{code}](#categories)                               | Gets a list of categories which match code                                        | N/A                                   | Updates category at a specific publication node | Removes category at a specific publication node                      |
 | [/categoryEditions/](#categoryeditions)                         | Gets a list of all category editions                                              | Create a new category edition         | N/A                                             | Remove category editions at publication node level or edition  level |
 
@@ -342,6 +342,15 @@ The edition corresponds to an "Edition" in Yudu Publisher.
   <webLiveUrl>http://hosted.edition.domain/pathToEditionWebUrl</webLiveUrl>
   <htmlLiveUrl>http://hosted.edition.domain/pathToEditionHtmlUrl</htmlLiveUrl>
   <onDeviceName>My Edition</onDeviceName>
+  <drmEnabled>true</drmEnabled>
+  <iosSaleOption>FREE</iosSaleOption>
+  <iTunesConnectId>MyId</iTunesConnectId>
+  <androidSaleOption>FREE</androidSaleOption>
+  <enableSharingByEmail>true</enableSharingByEmail>
+  <enablePrinting>true</enablePrinting>
+  <googleAnalyticsTrackerId> UA-000000-0</googleAnalyticsTrackerId>
+  <gaEditionDimensionIndex>1</gaEditionDimensionIndex>
+  <gaReportNameInsteadOfNodeId>true</gaReportNameInsteadOfNodeId>
   <image_url>http://hosted.image.domain/pathToThumbnailUrl</image_url>
   <links>
     ⋮ // some link elements
@@ -362,6 +371,31 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 </editions>
 ```
 
+#### <a name="edition-permissible-fields"></a>Permissible Fields
+
+| Element / Attribute           | PUT       | POST      |
+| ----------------------------- | --------- | --------- |
+| `name`                        | Required  | Required  |
+| `onDeviceName`                | Required  | Required  |
+| `shortName`                   | Required  | Required  |
+| `drmEnabled`                  | Required  | Allowed   |
+| `iosSaleOption`               | Required  | Allowed   |
+| `iTunesConnectId`             | Allowed   | Allowed   |
+| `androidSaleOption`           | Required  | Allowed   |
+| `enableSharingByEmail`        | Required  | Allowed   |
+| `enablePrinting`              | Required  | Allowed   |
+| `googleAnalyticsTrackerId`    | Allowed   | Allowed   |
+| `gaEditionDimensionIndex`     | Allowed   | Allowed   |
+| `gaPlatformDimensionIndex`    | Allowed   | Allowed   |
+| `gaReportNameInsteadOfNodeId` | Allowed   | Allowed   |
+| `documentUrl`                 | Allowed   | Required  |
+| `publicationNodeId`           | Forbidden | Required  |
+| `previewDaysLimit`             | Allowed   | Allowed   |
+| `previewViewsLimit`            | Allowed   | Allowed   |
+| `pageBillingType`             | Allowed   | Allowed   |
+| `targetState`                 | Required  | Allowed   |
+
+
 #### Sortable Fields
 
 Editions can be sorted by the following fields (see [Pagination](#pagination) for details):
@@ -374,7 +408,7 @@ Editions can be sorted by the following fields (see [Pagination](#pagination) fo
 
 | URI          | Relation                          | Verbs   |
 | ------------ | --------------------------------- | ------- |
-| `/editions/` | `http://schema.yudu.com/editions` | **GET** |
+| `/editions/` | `http://schema.yudu.com/editions` | **GET**, **POST** |
 
 ##### GET
 
@@ -392,15 +426,75 @@ A **GET** request returns the XML representation of a list of editions, optional
 | **htmlPublished**         | [Boolean](#booleans) | Return only editions which are published (or not published) on the HTML5 platform        |
 | **webPublished**          | [Boolean](#booleans) | Return only editions which are published (or not published) on the combined web platform |
 
+##### POST
+
+A **POST** request creates a new edition. The request body must contain the XML representation of an EditionState with the required fields as detailed in [Permissible Fields](#edition-permissible-fields).
+
 #### Single Edition
 
 | URI              | Relation                         | Verbs   |
 | ---------------- | -------------------------------- | ------- |
-| `/editions/{id}` | `http://schema.yudu.com/edition` | **GET** |
+| `/editions/{id}` | `http://schema.yudu.com/edition` | **GET**, **PUT** |
 
 ##### GET
 
 A **GET** request returns the XML representation of the edition. Note that any fields which do not have a value may not be included in the XML representation.
+
+##### PUT
+
+A **PUT** request updates an existing edition. The request body must contain the XML representation of an EditionState with the required fields as detailed in [Permissible Fields](#edition-permissible-fields). Of the fields marked "Allowed", any you do not include will be set to null.
+
+##### XML Representation of an EditionState
+``` xml
+<editionState>
+  <name>My Edition</name>
+  <onDeviceName>My Edition</onDeviceName>
+  <shortName>MyEdition</shortName>
+  <targetState>
+    <web>PREVIEW</web>
+  </targetState>
+  <drmEnabled>true</drmEnabled>
+  <iosSaleOption>FREE</iosSaleOption>
+  <androidSaleOption>FREE</androidSaleOption>
+  <enableSharingByEmail>true</enableSharingByEmail>
+  <enablePrinting>true</enablePrinting>
+</editionState>
+```
+
+##### TargetState
+
+A TargetState specifies the publish state the edition will get to for each platform.
+
+Platforms are:  
+web  
+ios  
+android
+
+Options are:  
+PREVIEW  
+LIVE  
+UNPUBLISH  
+UNPREVIEW  
+UNAVAILABLE  
+ZIP_LIVE  
+ZIP_UNPUBLISH
+
+To republish a web zip, it must be unpublished first.
+
+##### PageBillingType
+
+A PageBillingType needs to be specified when a publish request is sent. This decides how the pages published are billed.
+
+Options are:  
+UNBILLED  
+PLATFORM  
+UNIVERSAL
+
+Using the PLATFORM option will use the billing type specific to each platform being published.
+
+##### DELETE
+
+A **DELETE** request deletes an existing edition.
 
 ### Permission
 
