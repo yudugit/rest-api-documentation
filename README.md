@@ -373,29 +373,89 @@ The edition corresponds to an "Edition" in Yudu Publisher.
 </editions>
 ```
 
+##### EditionState
+``` xml
+<editionState>
+  <name>My Edition</name>
+  <onDeviceName>My Edition</onDeviceName>
+  <shortName>MyEdition</shortName>
+  <targetState>
+    <web>PREVIEW</web>
+  </targetState>
+  <drmEnabled>true</drmEnabled>
+  <iosSaleOption>FREE</iosSaleOption>
+  <androidSaleOption>FREE</androidSaleOption>
+  <enableSharingByEmail>true</enableSharingByEmail>
+  <enablePrinting>true</enablePrinting>
+  <callbackSuccess>http://hosted.edition.domain/callbackSuccess</callbackSuccess>
+  <callbackFailure>http://hosted.edition.domain/callbackFailure</callbackFailure>
+</editionState>
+```
+
+###### TargetState
+
+A TargetState specifies the publish state the edition will get to for each platform.
+
+Platforms are:  
+web  
+ios  
+android
+
+Options are:  
+PREVIEW  
+LIVE  
+UNPUBLISH  
+UNPREVIEW  
+UNAVAILABLE  
+ZIP_LIVE  
+ZIP_UNPUBLISH
+
+To republish a web zip, it must be unpublished first.
+
+###### PageBillingType
+
+A PageBillingType needs to be specified when a publish request is sent. This decides how the pages published are billed.
+
+Options are:  
+UNBILLED  
+PLATFORM  
+UNIVERSAL
+
+Using the PLATFORM option will use the billing type specific to each platform being published.
+
+###### <a name="edition-callback-success"></a>CallbackSuccess
+
+A CallbackSuccess may be specified in order to declare an endpoint to be notified when the edition is created successfully. An appropriate [Meta Publishing Result](#meta-publishing-result) is sent to said endpoint.
+
+###### <a name="edition-callback-failure"></a>CallbackFailure
+
+A CallbackFailure may be specified in order to declare an endpoint to be notified when the edition fails to be created. An appropriate [Meta Publishing Result](#meta-publishing-result) is sent to said endpoint.
+
 #### <a name="edition-permissible-fields"></a>Permissible Fields
 
-| Element / Attribute           | PUT       | POST      |
-| ----------------------------- | --------- | --------- |
-| `name`                        | Required  | Required  |
-| `onDeviceName`                | Required  | Required  |
-| `shortName`                   | Required  | Required  |
-| `drmEnabled`                  | Required  | Allowed   |
-| `iosSaleOption`               | Required  | Allowed   |
-| `iTunesConnectId`             | Allowed   | Allowed   |
-| `androidSaleOption`           | Required  | Allowed   |
-| `enableSharingByEmail`        | Required  | Allowed   |
-| `enablePrinting`              | Required  | Allowed   |
-| `googleAnalyticsTrackerId`    | Allowed   | Allowed   |
-| `gaEditionDimensionIndex`     | Allowed   | Allowed   |
-| `gaPlatformDimensionIndex`    | Allowed   | Allowed   |
-| `gaReportNameInsteadOfNodeId` | Allowed   | Allowed   |
-| `documentUrl`                 | Allowed   | Required  |
-| `publicationNodeId`           | Forbidden | Required  |
-| `previewDaysLimit`             | Allowed   | Allowed   |
-| `previewViewsLimit`            | Allowed   | Allowed   |
-| `pageBillingType`             | Allowed   | Allowed   |
-| `targetState`                 | Required  | Allowed   |
+| Element / Attribute           | PUT       | POST     |
+|-------------------------------|-----------|----------|
+| `name`                        | Required  | Required |
+| `onDeviceName`                | Required  | Required |
+| `shortName`                   | Required  | Required |
+| `drmEnabled`                  | Required  | Allowed  |
+| `iosSaleOption`               | Required  | Allowed  |
+| `iTunesConnectId`             | Allowed   | Allowed  |
+| `androidSaleOption`           | Required  | Allowed  |
+| `enableSharingByEmail`        | Required  | Allowed  |
+| `enablePrinting`              | Required  | Allowed  |
+| `googleAnalyticsTrackerId`    | Allowed   | Allowed  |
+| `gaEditionDimensionIndex`     | Allowed   | Allowed  |
+| `gaPlatformDimensionIndex`    | Allowed   | Allowed  |
+| `gaReportNameInsteadOfNodeId` | Allowed   | Allowed  |
+| `documentUrl`                 | Allowed   | Required |
+| `publicationNodeId`           | Forbidden | Required |
+| `previewDaysLimit`            | Allowed   | Allowed  |
+| `previewViewsLimit`           | Allowed   | Allowed  |
+| `pageBillingType`             | Allowed   | Allowed  |
+| `targetState`                 | Required  | Allowed  |
+| `callbackSuccess`             | Allowed   | Allowed  |
+| `callbackFailure`             | Allowed   | Allowed  |
 
 
 #### Sortable Fields
@@ -405,6 +465,47 @@ Editions can be sorted by the following fields (see [Pagination](#pagination) fo
 - `id`
 - `name`
 - `publishedDate`
+
+#### <a name="meta-publishing-result"></a>Meta Publishing Result
+
+##### Successful Operation
+
+This is an example of the response sent to the [CallbackSuccess](#edition-callback-success) endpoint following a successful operation.
+
+``` xml
+<metaPublishingResult>
+  <book_id>1234</book_id>
+  <title>My Edition</title>
+  <published_url>http://hosted.edition.domain/Index.html</published_url>
+  <page_count>3</page_count>
+  <status>UPDATED</status>
+  <TargetPublishState>
+    <Web>UNPUBLISH</Web>
+    <Android>UNPUBLISH</Android>
+    <iOS>UNPUBLISH</iOS>
+  </TargetPublishState>
+</metaPublishingResult>
+```
+
+##### Failed Operation
+
+This is an example of the response sent to the [CallbackFailure](#edition-callback-failure) endpoint following a failed operation.
+
+``` xml
+<metaPublishingResult>
+  <book_id>1234</book_id>
+  <title>My Edition</title>
+  <published_url>http://hosted.edition.domain/Index.html</published_url>
+  <page_count>3</page_count>
+  <status>FAILED</status>
+  <TargetPublishState>
+     <Web>LIVE</Web>
+     <Android>LIVE</Android>
+     <iOS>LIVE</iOS>
+  </TargetPublishState>
+  <Exception>ExceptionWhichCausedFailure</Exception>
+</metaPublishingResult>
+```
 
 #### <a name="editions-edition-list"></a>Edition List
 
@@ -446,57 +547,11 @@ A **GET** request returns the XML representation of the edition. Note that any f
 
 A **PUT** request updates an existing edition. The request body must contain the XML representation of an EditionState with the required fields as detailed in [Permissible Fields](#edition-permissible-fields). Of the fields marked "Allowed", any you do not include will be set to null.
 
-##### XML Representation of an EditionState
-``` xml
-<editionState>
-  <name>My Edition</name>
-  <onDeviceName>My Edition</onDeviceName>
-  <shortName>MyEdition</shortName>
-  <targetState>
-    <web>PREVIEW</web>
-  </targetState>
-  <drmEnabled>true</drmEnabled>
-  <iosSaleOption>FREE</iosSaleOption>
-  <androidSaleOption>FREE</androidSaleOption>
-  <enableSharingByEmail>true</enableSharingByEmail>
-  <enablePrinting>true</enablePrinting>
-</editionState>
-```
-
-##### TargetState
-
-A TargetState specifies the publish state the edition will get to for each platform.
-
-Platforms are:  
-web  
-ios  
-android
-
-Options are:  
-PREVIEW  
-LIVE  
-UNPUBLISH  
-UNPREVIEW  
-UNAVAILABLE  
-ZIP_LIVE  
-ZIP_UNPUBLISH
-
-To republish a web zip, it must be unpublished first.
-
-##### PageBillingType
-
-A PageBillingType needs to be specified when a publish request is sent. This decides how the pages published are billed.
-
-Options are:  
-UNBILLED  
-PLATFORM  
-UNIVERSAL
-
-Using the PLATFORM option will use the billing type specific to each platform being published.
-
 ##### DELETE
 
 A **DELETE** request deletes an existing edition.
+
+
 
 ### Permission
 
