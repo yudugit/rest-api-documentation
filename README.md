@@ -1144,7 +1144,7 @@ A simple use-case could be as follows:
 4. The reader's browser redirects to the edition and the edition uses the token to authenticate, logging in that specific Reader.
 
 ### Targeted Notifications
-A targeted notification represents a notification to be sent to a specified list of Yudu subscribers and/or third-party subscribers, via Firebase and APNS.
+A targeted notification represents a notification to be sent to a specified list of Yudu subscribers and/or third-party subscribers, via Firebase, WNS and APNS.
 
 The targeted notification resource is different to other resources within the REST API, in that it doesn't represent an object of some kind, and therefore cannot be specified by an `id`. In addition to this, it never contains `link` elements defining relations of the resource and there are no pagination options necessary.
 
@@ -1158,9 +1158,10 @@ The targeted notification resource is represented in XML with a `targetedNotific
     <message>Notification body</message>
     <title>Notification title</title>
     <notificationPriority>DEFAULT</notificationPriority>
-	<disableSound>false</disableSound>
-	<iDeviceDeepLink>myapp://mylink</iDeviceDeepLink>
-	<androidDeepLink>myapp://mylink</androidDeepLink>
+    <disableSound>false</disableSound>
+    <iDeviceDeepLink>myapp://mylink</iDeviceDeepLink>
+    <androidDeepLink>myapp://mylink</androidDeepLink>
+    <windowsDeepLink>myapp://mylink</windowsDeepLink>
     <subscribers>
         <thirdPartySubscriberToken>abcdef</thirdPartySubscriberToken>
         <subscriberUsername>abcdef</subscriberUsername>
@@ -1170,14 +1171,15 @@ The targeted notification resource is represented in XML with a `targetedNotific
 
 #### Permissible Fields
 | Element                | Description                                         | Type                                          | POST     |
-| ---------------------- | --------------------------------------------------- | --------------------------------------------- | -------- |
+|------------------------|-----------------------------------------------------|-----------------------------------------------|----------|
 | `nodeId`               | Publication node ID                                 | Integer                                       | Required |
 | `message`              | The body of the notification                        | String                                        | Required |
 | `title`                | The title of the notification                       | String                                        | Allowed  |
 | `notificationPriority` | The priority of the notification                    | [NotificationPriority](#notificationpriority) | Allowed  |
-| `disableSound`         | Disable the notification sound                      |  Boolean                                      | Allowed  |
+| `disableSound`         | Disable the notification sound                      | Boolean                                       | Allowed  |
 | `iDeviceDeepLink`      | The deep link to be followed on iDevice apps        | String                                        | Allowed  |
-| `androidDeepLink`      | The deep link to be followed on Android apps        | String                                        | Allowed  |            
+| `androidDeepLink`      | The deep link to be followed on Android apps        | String                                        | Allowed  |
+| `windowsDeepLink`.     | The deep link to be followed on Windows apps.       | String                                        | Allowed  |
 | `subscribers`          | The list of subscribers to send the notification to | [Subscriber elements](#subscriber-elements)   | Required |
 
 ##### NotificationPriority
@@ -1214,7 +1216,7 @@ The deep links that are currently supported are:
 A **POST** request sends a targeted notification to the specified list of subscribers, and returns an XML representation of the response.
 
 #### Targeted Notification Response
-A targeted notification response will be returned as an XML representation, providing information about the success of iOS push notifications and Firebase cloud messages, and reasons for failures.
+A targeted notification response will be returned as an XML representation, providing information about the success of iOS push notifications, Firebase cloud messages and Windows notifications, and reasons for failures.
 
 ##### XML Failure Response
 ``` xml
@@ -1228,6 +1230,13 @@ A targeted notification response will be returned as an XML representation, prov
             and the project ID supplied on the "editPublication.htm" page.
         </responseMessage>
     </firebaseResponse>
+    <windowsResponse>
+        <allSucceeded>false</allSucceeded>
+        <responseMessage>
+            No Windows client ID and client secret have been set for this node.
+            Make sure to provide them on the "editPublication.htm" page.
+        </responseMessage>
+    </windowsResponse>
     <iOSResponse>
         <allSucceeded>false</allSucceeded>
         <responseMessage>
@@ -1250,6 +1259,13 @@ A targeted notification response will be returned as an XML representation, prov
             There were 1 messages to send, and 1 sent successfully.
         </responseMessage>
     </firebaseResponse>
+    <windowsResponse>
+        <allSucceeded>true</allSucceeded>
+        <responseMessage>
+            Successfully completed sending Windows notifications.
+            There were 1 messages to send, and 1 sent successfully.
+        </responseMessage>
+    </windowsResponse>
     <iOSResponse>
         <allSucceeded>true</allSucceeded>
         <responseMessage>
